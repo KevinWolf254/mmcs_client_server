@@ -1,24 +1,26 @@
 package co.ke.aeontech.pojos.response;
 
-public class AvailabilityResponse implements Response {
+import co.ke.proaktiv.io.pojos.response.Response;
 
-	private Boolean isAvailable;
+public class AvailabilityResponse {//implements Response {
 
-	public AvailabilityResponse(Boolean isAvailable) {
-		super();
-		this.isAvailable = isAvailable;
-	}
-
-	public AvailabilityResponse() {
-		super();
-	}
-
-	public Boolean getIsAvailable() {
-		return isAvailable;
-	}
-
-	public void setIsAvailable(Boolean isAvailable) {
-		this.isAvailable = isAvailable;
-	}
+//	private Boolean isAvailable;
+//
+//	public AvailabilityResponse(Boolean isAvailable) {
+//		super();
+//		this.isAvailable = isAvailable;
+//	}
+//
+//	public AvailabilityResponse() {
+//		super();
+//	}
+//
+//	public Boolean getIsAvailable() {
+//		return isAvailable;
+//	}
+//
+//	public void setIsAvailable(Boolean isAvailable) {
+//		this.isAvailable = isAvailable;
+//	}
 	
 }
