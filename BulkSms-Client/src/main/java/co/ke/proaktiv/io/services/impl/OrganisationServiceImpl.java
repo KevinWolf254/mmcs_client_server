@@ -102,8 +102,10 @@ public class OrganisationServiceImpl implements OrganisationService{
 		final User newUser = userService.save(new User(user.getSurname(), user.getOtherNames(), 
 				user.getEmail(), org));
 		
-		final UserCredentials cred = credService.save(new UserCredentials(passwordEncoder
-				.encode(user.getPassword()), newUser));
+		final UserCredentials credentials = new UserCredentials(passwordEncoder
+				.encode(user.getPassword()), newUser);
+		credentials.setEnabled(Boolean.TRUE);
+		final UserCredentials cred = credService.save(credentials);
 		
 		userRoleService.save(new UserRole(Role.ADMIN, cred));
 		
@@ -137,22 +139,27 @@ public class OrganisationServiceImpl implements OrganisationService{
 	
 	@Override
 	public boolean isEnabled(final String email) {	
-		header = new HttpHeaders();
-		parameters = new LinkedMultiValueMap<String, Object>();
-		
-		header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		parameters.add("email", email);
-		
-		body = new HttpEntity<MultiValueMap<String, Object>>(parameters, header);
-		final ResponseEntity<ClientResponse> response = restTemplate
-				.exchange(URI + "/admin/signin", 
-				HttpMethod.POST, body, ClientResponse.class);
-		final ClientResponse client = response.getBody();
+		final ClientResponse client = getClient(email);
 		if(client.getCode() == 400)
 			return false;
 		
 		return client.getClient().isEnabled();
+	}
+
+	private ClientResponse getClient(final String email) {
+		header = new HttpHeaders();		
+		header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		
+		parameters = new LinkedMultiValueMap<String, Object>();
+		parameters.add("email", email);
+		
+		body = new HttpEntity<MultiValueMap<String, Object>>(parameters, header);
+		
+		final ResponseEntity<ClientResponse> response = restTemplate
+				.exchange(URI + "/admin/signin", 
+				HttpMethod.POST, body, ClientResponse.class);//ClientResponse.class);
+		final ClientResponse client = response.getBody();
+		return client;
 	}	
 	private static final Logger log = LoggerFactory.getLogger(OrganisationServiceImpl.class);
-
 }
