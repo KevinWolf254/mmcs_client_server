@@ -16,10 +16,10 @@ import co.ke.proaktiv.io.configurations.CustomAsyncExceptionHandler;
 
 @SpringBootApplication
 @EnableAsync
-public class BulkSmsClientApplication {
+public class SmsClientServer {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BulkSmsClientApplication.class, args);
+		SpringApplication.run(SmsClientServer.class, args);
 	}
 	
 	@Bean

@@ -23,11 +23,6 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public Group save(final Group group) {
-		final Long id = userService.getSignedInUser().getOrganisation().getId();
-		final String name = group.getName();
-		final StringBuilder builder = new StringBuilder(""+id)
-				.append("_").append(name);
-		group.setName(builder.toString());
 		return repository.save(group);
 	}
 	

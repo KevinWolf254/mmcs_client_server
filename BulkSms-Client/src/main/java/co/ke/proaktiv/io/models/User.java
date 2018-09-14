@@ -7,8 +7,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -36,12 +36,13 @@ public class User {
 	@ManyToOne
 	(fetch = FetchType.LAZY, 
 			cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinColumn(name = "organisation_id", nullable = false)
 	private Organisation organisation;
 	
-	@OneToOne(mappedBy = "profile",
-	        cascade = CascadeType.ALL, orphanRemoval = true)
-	private UserCredentials credentials;
-	
+//	@OneToOne(mappedBy = "profile",
+//	        cascade = CascadeType.ALL, orphanRemoval = true)
+//	private UserCredentials credentials;
+//	
 	public User() {
 		super();
 	}
@@ -52,7 +53,7 @@ public class User {
 		this.surname = user.getSurname();
 		this.otherNames = user.getOtherNames();
 		this.email = user.getEmail();
-		this.credentials = user.getCredentials();
+//		this.credentials = user.getCredentials();
 		this.organisation = user.getOrganisation();
 	}
 	
@@ -63,15 +64,14 @@ public class User {
 		this.email = email;
 	}
 
-	public User(String surname, String otherNames, String email, Organisation employer,
-			UserCredentials credentials) {
-		super();
-		this.surname = surname;
-		this.otherNames = otherNames;
-		this.email = email;
-		this.organisation = employer;
-		this.credentials = credentials;
-	}
+//	public User(String surname, String otherNames, String email, Organisation employer) {
+//		super();
+//		this.surname = surname;
+//		this.otherNames = otherNames;
+//		this.email = email;
+//		this.organisation = employer;
+////		this.credentials = credentials;
+//	}
 	
 	public User(String surname, String otherNames, String email, Organisation employer) {
 		super();
@@ -121,14 +121,14 @@ public class User {
 	public void setOrganisation(Organisation org) {
 		this.organisation = org;
 	}
-	@JsonIgnore
-	public UserCredentials getCredentials() {
-		return credentials;
-	}
-
-	public void setCredentials(UserCredentials credentials) {
-		this.credentials = credentials;
-	}
+//	@JsonIgnore
+//	public UserCredentials getCredentials() {
+//		return credentials;
+//	}
+//
+//	public void setCredentials(UserCredentials credentials) {
+//		this.credentials = credentials;
+//	}
 	
 	@Override
 	public String toString() {

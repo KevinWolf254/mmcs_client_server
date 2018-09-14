@@ -27,10 +27,10 @@ public class Organisation {
 	@Column(name="name", unique = true)
 	private String name;
 	
-	@OneToMany(mappedBy = "employer", orphanRemoval=true,
+	@OneToMany(mappedBy = "organisation", orphanRemoval=true,
 			fetch = FetchType.LAZY,
 			cascade = CascadeType.ALL)
-	private Set<User> employees  = new HashSet<User>();
+	private Set<User> users  = new HashSet<User>();
 	
 	@OneToMany(mappedBy = "organisation", orphanRemoval=true,
 			fetch = FetchType.LAZY,
@@ -69,12 +69,12 @@ public class Organisation {
 	}
 
 	@JsonIgnore
-	public Set<User> getEmployees() {
-		return employees;
+	public Set<User> getUsers() {
+		return users;
 	}
 
-	public void setEmployees(Set<User> employees) {
-		this.employees = employees;
+	public void setUsers(Set<User> users) {
+		this.users = users;
 	}
 
 	@JsonIgnore

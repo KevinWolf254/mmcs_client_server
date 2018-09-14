@@ -27,7 +27,7 @@ public class Text {
 	private String message;
 	
 	@OneToOne
-	@JoinColumn(name = "schedule", nullable=false)
+	@JoinColumn(name = "schedule_id", nullable=false)
 	private Schedule schedule;
 
 	public Text() {

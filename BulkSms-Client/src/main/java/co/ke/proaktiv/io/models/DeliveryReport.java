@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -42,7 +43,8 @@ public class DeliveryReport {
 	
 	@ManyToOne
 	(fetch = FetchType.LAZY, 
-			cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+			cascade = {CascadeType.PERSIST, CascadeType.MERGE})	
+	@JoinColumn(name = "organisation_id", nullable = false)
 	private Organisation organisation;
 	
 	public DeliveryReport() {

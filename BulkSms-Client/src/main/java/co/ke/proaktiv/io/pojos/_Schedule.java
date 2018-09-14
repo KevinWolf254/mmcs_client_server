@@ -2,7 +2,7 @@ package co.ke.proaktiv.io.pojos;
 
 import java.util.Date;
 
-import co.ke.aeontech.pojos.helpers.Days;
+import co.ke.proaktiv.io.pojos.helpers.Day;
 import co.ke.proaktiv.io.pojos.helpers.ScheduleType;
 
 public class _Schedule {	
@@ -10,7 +10,7 @@ public class _Schedule {
 	private String createdBy;
 	private ScheduleType type;
 	private Date date;
-	private Days dayOfWeek;
+	private Day dayOfWeek;
 	private int dayOfMonth;
 	private String cronExpression;
 	public _Schedule() {
@@ -34,10 +34,10 @@ public class _Schedule {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	public Days getDayOfWeek() {
+	public Day getDayOfWeek() {
 		return dayOfWeek;
 	}
-	public void setDayOfWeek(Days dayOfWeek) {
+	public void setDayOfWeek(Day dayOfWeek) {
 		this.dayOfWeek = dayOfWeek;
 	}
 	public int getDayOfMonth() {

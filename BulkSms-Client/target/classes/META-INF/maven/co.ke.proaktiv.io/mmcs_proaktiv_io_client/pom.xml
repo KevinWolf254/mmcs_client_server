@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>co.ke.aeontech</groupId>
-	<artifactId>BulkSms-Client-API</artifactId>
+	<groupId>co.ke.proaktiv.io</groupId>
+	<artifactId>mmcs_proaktiv_io_client</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>BulkSms-Client</name>
+	<name>mmcs_proaktiv_io_client</name>
 	<description>Client backend server for bulksms app</description>
 
 	<parent>

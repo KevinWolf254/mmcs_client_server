@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import co.ke.proaktiv.io.pojos.CreditCharges;
 import co.ke.proaktiv.io.pojos.response.CreditResponse;
 import co.ke.proaktiv.io.services.CreditService;
 
+@Service
 public class CreditServiceImpl implements CreditService {
 	@Autowired
 	private RestTemplate restTemplate;	

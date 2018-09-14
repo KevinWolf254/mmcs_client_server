@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -20,6 +21,7 @@ import co.ke.proaktiv.io.pojos.pro._Payment;
 import co.ke.proaktiv.io.pojos.response.Response;
 import co.ke.proaktiv.io.services.PaymentService;
 
+@Service
 public class PaymentServiceImpl implements PaymentService {
 	@Autowired
 	private RestTemplate restTemplate;	

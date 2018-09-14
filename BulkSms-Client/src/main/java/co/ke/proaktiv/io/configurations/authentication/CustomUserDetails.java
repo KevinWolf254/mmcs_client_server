@@ -8,8 +8,11 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import co.ke.proaktiv.io.models.User;
+import co.ke.proaktiv.io.models.UserCredentials;
 import co.ke.proaktiv.io.models.UserRole;
 import co.ke.proaktiv.io.services.OrganisationService;
+import co.ke.proaktiv.io.services.UserCredentialsService;
+import co.ke.proaktiv.io.services.UserRoleService;
 
 public class CustomUserDetails extends User implements UserDetails{
 	/**
@@ -18,14 +21,16 @@ public class CustomUserDetails extends User implements UserDetails{
 	private static final long serialVersionUID = 1L;
 
 	private OrganisationService orgService;
-	private Set<UserRole> roles;
+	private UserCredentialsService credService;
+	private UserRoleService roleService;
 	private int i;
 	
-	public CustomUserDetails(final User user, final Set<UserRole> roles, 
-			final OrganisationService orgService) {
+	public CustomUserDetails(final User user, final UserCredentialsService credService,  
+			final UserRoleService roleService, final OrganisationService orgService) {
 		super(user);
-		this.roles = roles;
+		this.roleService = roleService;
 		this.orgService = orgService;
+		this.credService = credService;
 	}
 
 	@Override
@@ -52,11 +57,14 @@ public class CustomUserDetails extends User implements UserDetails{
 	public boolean isEnabled() {
 		if(!orgService.isEnabled(getUsername()))
 			return false;
-		return super.getCredentials().isEnabled();
+		return credService.findByUser(this).isEnabled();
 	}
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
+		final UserCredentials cred = credService.findByUser(this);
+		final Set<UserRole> roles = roleService.findByUserCredentials(cred);
+		
 		final String[] userRoles = new String[roles.size()];
 		i = 0;
 		roles.stream().forEach(role ->{
@@ -68,7 +76,7 @@ public class CustomUserDetails extends User implements UserDetails{
 
 	@Override
 	public String getPassword() {
-		return super.getCredentials().getPassword();
+		return credService.findByUser(this).getPassword();
 	}
 
 }

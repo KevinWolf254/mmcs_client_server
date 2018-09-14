@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public Set<User> findByOrganisationId(final Long id) {
-		final Set<User> users = repository.finByOrganisationId(id);
+		final Set<User> users = repository.findByOrganisationId(id);
 		return users;
 	}
 

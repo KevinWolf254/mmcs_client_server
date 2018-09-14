@@ -23,14 +23,14 @@ public class OrganisationController {
 	@PostMapping(value = "/signup")
 	public ResponseEntity<Object> save(	@RequestParam("surname") String surname,
 			@RequestParam("otherNames") String otherNames, @RequestParam("organisation") String name,			
-			@RequestParam("country") Country country, @RequestParam("code") Country code,	
+			@RequestParam("country") Country country, @RequestParam("code") String code,	
 			@RequestParam("phoneNo") String subscriberNo, @RequestParam("email") String email, 
 			@RequestParam("shortCode") String sc_name, @RequestParam("password") String password){
 
 		final Client client = new Client(country, name);
 		
 		final StringBuilder phoneNo = new StringBuilder("+")
-				.append(code.getCountryCode())
+				.append(code)
 				.append(subscriberNo);
 		final AdminRole admin = new AdminRole(email, phoneNo.toString(), 
 				surname, otherNames, password, Role.ADMIN);

@@ -45,7 +45,7 @@ public class UserCredentialsServiceImpl implements UserCredentialsService{
 	public UserCredentials update(final String newPassword) {
 		final User user = userService.getSignedInUser();
 		//retrieve user's credentials
-		final UserCredentials cred = user.getCredentials();
+		final UserCredentials cred = findByUser(user);
 		final String encodedNewPass = encoder.encode(newPassword);
 		//change password
 		cred.setPassword(encodedNewPass);

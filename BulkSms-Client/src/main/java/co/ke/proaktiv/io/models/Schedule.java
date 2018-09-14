@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import co.ke.aeontech.pojos.helpers.Days;
+import co.ke.proaktiv.io.pojos.helpers.Day;
 import co.ke.proaktiv.io.pojos.helpers.ScheduleType;
 
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
@@ -47,7 +47,7 @@ public class Schedule {
 	private Date date;
 	
 	@Column(name="day_of_week")
-	private Days dayOfWeek;
+	private Day dayOfWeek;
 	
 	@Column(name="day_of_month")
 	private int dayOfMonth;
@@ -101,7 +101,7 @@ public class Schedule {
 	 * @param groupAll; get the organization's group that has all the contacts. Every
 	 * contact is added to this group
 	 */
-	public Schedule(String name, String createdBy, Date date, Days dayOfWeek, 
+	public Schedule(String name, String createdBy, Date date, Day dayOfWeek, 
 			String cronExpression) {
 		super();
 		this.name = name;
@@ -183,11 +183,11 @@ public class Schedule {
 		this.date = date;
 	}
 
-	public Days getDayOfWeek() {
+	public Day getDayOfWeek() {
 		return dayOfWeek;
 	}
 
-	public void setDayOfWeek(Days dayOfWeek) {
+	public void setDayOfWeek(Day dayOfWeek) {
 		this.dayOfWeek = dayOfWeek;
 	}
 

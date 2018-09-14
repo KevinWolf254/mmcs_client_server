@@ -2,6 +2,8 @@ package co.ke.proaktiv.io.services.impl;
 
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -61,12 +63,12 @@ public class OrganisationServiceImpl implements OrganisationService{
 	private String URI;
 
 	@Override
-	public Optional<Organisation> findById(Long id) {
+	public Optional<Organisation> findById(final Long id) {
 		return repository.findById(id);
 	}
 	
 	@Override
-	public Optional<Organisation> findByName(String orgName) {
+	public Optional<Organisation> findByName(final String orgName) {
 		return repository.findByName(orgName);
 	}
 	
@@ -74,11 +76,11 @@ public class OrganisationServiceImpl implements OrganisationService{
 	public SignUpResponse save(final Client client, final AdminRole user, final String sc_name) {
 		
 		final Optional<User> user_ = userService.findByEmail(user.getEmail());
-		if(!user_.isPresent()) 
+		if(user_.isPresent()) 
 			return new SignUpResponse(400, "failed", "user already exist");
 		
 		final Optional<Organisation> client_ = repository.findByName(client.getName());
-		if(!client_.isPresent()) 
+		if(client_.isPresent()) 
 			return new SignUpResponse(400, "failed", "Organization already exist");
 		
 		if(shortCodeService.exists(sc_name)) 
@@ -89,10 +91,13 @@ public class OrganisationServiceImpl implements OrganisationService{
 			return report;
 		
 		final Client savedClient = report.getClient();
+		log.info("org id: "+savedClient.getId());
 		final Organisation org = save(new Organisation(savedClient.getId(), 
 				savedClient.getName()));
-		
-		groupService.save(new Group(org.getId()+"_All_Contacts", org));
+
+		final StringBuilder builder = new StringBuilder(""+org.getId())
+				.append("_All_Contacts");
+		groupService.save(new Group(builder.toString(), org));
 		
 		final User newUser = userService.save(new User(user.getSurname(), user.getOtherNames(), 
 				user.getEmail(), org));
@@ -105,7 +110,7 @@ public class OrganisationServiceImpl implements OrganisationService{
 		return report;
 	}
 
-	private SignUpResponse create(Client client, AdminRole user, String sc_name) {
+	private SignUpResponse create(final Client client, final AdminRole user, final String sc_name) {
 
 		header = new HttpHeaders();
 		header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -148,4 +153,6 @@ public class OrganisationServiceImpl implements OrganisationService{
 		
 		return client.getClient().isEnabled();
 	}	
+	private static final Logger log = LoggerFactory.getLogger(OrganisationServiceImpl.class);
+
 }

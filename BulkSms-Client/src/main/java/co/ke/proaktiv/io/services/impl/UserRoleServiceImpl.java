@@ -3,12 +3,14 @@ package co.ke.proaktiv.io.services.impl;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import co.ke.proaktiv.io.models.UserCredentials;
 import co.ke.proaktiv.io.models.UserRole;
 import co.ke.proaktiv.io.repository.UserRoleRepository;
 import co.ke.proaktiv.io.services.UserRoleService;
 
+@Service
 public class UserRoleServiceImpl implements UserRoleService{
 
 	@Autowired

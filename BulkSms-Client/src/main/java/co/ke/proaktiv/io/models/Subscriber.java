@@ -40,7 +40,7 @@ public class Subscriber {
 	@Column(name="number", length = 6, nullable = false)
 	private String number;
 	
-	@Column(name="number",nullable = false)
+	@Column(name="category",nullable = false)
 	private ServiceProvider category;
 	
 	@ManyToMany(fetch = FetchType.LAZY, 

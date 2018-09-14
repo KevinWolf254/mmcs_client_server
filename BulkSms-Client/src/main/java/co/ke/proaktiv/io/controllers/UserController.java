@@ -41,7 +41,7 @@ public class UserController {
 	@GetMapping(value = "/secure/user/signin")
 	public ResponseEntity<Object> signInUser() {
 		final User user = userService.getSignedInUser();
-		final UserCredentials cred = user.getCredentials();//credServices.findByUser(user);		
+		final UserCredentials cred = credService.findByUser(user);		
 		cred.setSignIn(new Date());
 		credService.save(cred);
 		final Set<UserRole> roles = roleService.findByUserCredentials(cred);
@@ -88,7 +88,7 @@ public class UserController {
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
-	@PutMapping(value = "/secure/users")
+	@PutMapping(value = "/secure/user")
 	public ResponseEntity<Object> updateUser(
 			@RequestParam("role") String role,
 			@RequestParam("surname") String surname,
@@ -104,8 +104,8 @@ public class UserController {
 		final User user = _user.get();
 		user.setSurname(surname);
 		user.setOtherNames(otherNames);
-		final UserCredentials cred = credService.findByUser(user);		
-		user.getCredentials().setEnabled(enabled);
+		final UserCredentials cred = credService.findByUser(user);	
+		cred.setEnabled(enabled);
 		
 		final Set<UserRole> roles = roleService.findByUserCredentials(cred);
 		roles.add(new UserRole(role));
