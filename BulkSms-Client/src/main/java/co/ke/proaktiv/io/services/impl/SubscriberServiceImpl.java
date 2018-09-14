@@ -20,7 +20,7 @@ import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.enums.CSVReaderNullFieldIndicator;
 
-import co.ke.proaktiv.io.models.Group;
+import co.ke.proaktiv.io.models.Group_;
 import co.ke.proaktiv.io.models.Organisation;
 import co.ke.proaktiv.io.models.Subscriber;
 import co.ke.proaktiv.io.pojos.SubscriberReport;
@@ -62,7 +62,7 @@ public class SubscriberServiceImpl implements SubscriberService {
 	public Set<Subscriber> findAll(final Long id){
 		final StringBuilder build = new StringBuilder(""+id)
 				.append("_All_Contacts");
-		final Group group = groupService.findByName(build.toString()).get();
+		final Group_ group = groupService.findByName(build.toString()).get();
 		return findByGroupsId(group.getId());
 	}
 	@Override
@@ -94,12 +94,12 @@ public class SubscriberServiceImpl implements SubscriberService {
 	@Override
 	public Subscriber save(final Subscriber_ subscriber) {
 		final Organisation organisation = userService.getSignedInUser().getOrganisation();
-		final Group group = groupService.findByName(organisation.getId()+"_All_Contacts").get();
+		final Group_ group = groupService.findByName(organisation.getId()+"_All_Contacts").get();
 		return save(subscriber, group);	
 	}
 	
 	@Override
-	public Subscriber save(final Subscriber_ subscriber, final Group group) {		
+	public Subscriber save(final Subscriber_ subscriber, final Group_ group) {		
 		final String code = subscriber.getCode();
 		final String provider = subscriber.getNumber().substring(0, 2);
 		final String number = subscriber.getNumber().substring(3);
@@ -111,7 +111,7 @@ public class SubscriberServiceImpl implements SubscriberService {
 	}
 	
 	private Subscriber save(final String code, final String provider, final String number, 
-			final Group group) {
+			final Group_ group) {
 		final Subscriber subscriber = findByCodePhoneNo(code, provider, number);
 		group.getSubscribers().add(subscriber);
 		groupService.save(group);
@@ -121,13 +121,13 @@ public class SubscriberServiceImpl implements SubscriberService {
 	@Override
 	public Set<Subscriber> save(final MultipartFile csvfile){	
 		final Organisation organisation = userService.getSignedInUser().getOrganisation();
-		final Group group = groupService.findByName(organisation.getId()+"_All_Contacts").get();
+		final Group_ group = groupService.findByName(organisation.getId()+"_All_Contacts").get();
 		return save(csvfile, group);
 		
 	}
 	
 	@Override
-	public Set<Subscriber> save(final MultipartFile csvfile, final Group group) {
+	public Set<Subscriber> save(final MultipartFile csvfile, final Group_ group) {
 		final File file = new File(csvfile.getOriginalFilename());
 		final Set<Subscriber> subscribers = new HashSet<Subscriber>();
 		try {
@@ -190,7 +190,7 @@ public class SubscriberServiceImpl implements SubscriberService {
 	@Override
 	public Response delete(Long contactId, Long groupId) {
 		final Subscriber contact = repository.findById(contactId).get();
-		final Group group = groupService.findById(groupId).get();
+		final Group_ group = groupService.findById(groupId).get();
 		
 		group.getSubscribers().remove(contact);
 		groupService.save(group);

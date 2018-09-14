@@ -35,7 +35,7 @@ public class Organisation {
 	@OneToMany(mappedBy = "organisation", orphanRemoval=true,
 			fetch = FetchType.LAZY,
 			cascade = CascadeType.ALL)
-	private Set<Group> groups = new HashSet<Group>();
+	private Set<Group_> groups = new HashSet<Group_>();
 	
 	@OneToMany(mappedBy = "organisation", orphanRemoval=true,
 			fetch = FetchType.LAZY,
@@ -78,11 +78,11 @@ public class Organisation {
 	}
 
 	@JsonIgnore
-	public Set<Group> getGroups() {
+	public Set<Group_> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(Set<Group> groups) {
+	public void setGroups(Set<Group_> groups) {
 		this.groups = groups;
 	}
 

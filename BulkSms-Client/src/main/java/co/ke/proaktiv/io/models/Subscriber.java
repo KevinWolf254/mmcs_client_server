@@ -48,14 +48,14 @@ public class Subscriber {
 	@JoinTable(name="group_subscriber",
 		inverseJoinColumns=@JoinColumn(name = "group_id"),
 		joinColumns=@JoinColumn(name = "subscriber_id"))
-	private Set<Group> groups = new HashSet<Group>();
+	private Set<Group_> groups = new HashSet<Group_>();
 	
 	public Subscriber() {
 		super();
 	}
 	
 	public Subscriber(String code, String serviceProvider, String number, 
-			ServiceProvider category, Group group) {
+			ServiceProvider category, Group_ group) {
 		super();
 		this.code = code;
 		this.serviceProvider = serviceProvider;
@@ -105,11 +105,11 @@ public class Subscriber {
 	}
 
 	@JsonIgnore
-	public Set<Group> getGroups() {
+	public Set<Group_> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(Set<Group> groups) {
+	public void setGroups(Set<Group_> groups) {
 		this.groups = groups;
 	}
 

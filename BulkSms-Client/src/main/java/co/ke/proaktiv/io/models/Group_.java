@@ -21,8 +21,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Entity
-@Table(name="group")
-public class Group {
+@Table(name="group_")
+public class Group_ {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -48,13 +48,16 @@ public class Group {
 	cascade = CascadeType.ALL)
 	private Set<Schedule> schedules = new HashSet<Schedule>();
 		
-	public Group() {
+	public Group_() {
 		super();
 	}
 
-	public Group(String name, Organisation organisation) {
+	public Group_(String name, Organisation organisation) {
 		super();
-		this.name = organisation.getId()+"_"+name;
+		final StringBuilder build = new StringBuilder(""+organisation.getId())
+				.append("_")
+				.append(name);
+		this.name = build.toString();
 		this.organisation = organisation;
 	}
 
@@ -117,7 +120,7 @@ public class Group {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Group other = (Group) obj;
+		Group_ other = (Group_) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;

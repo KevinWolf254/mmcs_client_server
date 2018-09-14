@@ -5,15 +5,15 @@ import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import co.ke.proaktiv.io.models.Group;
+import co.ke.proaktiv.io.models.Group_;
 
-public interface GroupRepository extends JpaRepository<Group, Long>{
+public interface GroupRepository extends JpaRepository<Group_, Long>{
 
-	public Set<Group> findByOrganisationId(Long id);
+	public Set<Group_> findByOrganisationId(Long id);
 
-	public Optional<Group> findByName(String name);
+	public Optional<Group_> findByName(String name);
 	
-	public Set<Group> findBySubscribersId(Long id);
+	public Set<Group_> findBySubscribersId(Long id);
 	
-	public Set<Group> findBySchedulesId(Long id);
+	public Set<Group_> findBySchedulesId(Long id);
 }

@@ -17,7 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import co.ke.proaktiv.io.models.Group;
+import co.ke.proaktiv.io.models.Group_;
 import co.ke.proaktiv.io.models.Organisation;
 import co.ke.proaktiv.io.models.User;
 import co.ke.proaktiv.io.models.UserCredentials;
@@ -95,9 +95,9 @@ public class OrganisationServiceImpl implements OrganisationService{
 		final Organisation org = save(new Organisation(savedClient.getId(), 
 				savedClient.getName()));
 
-		final StringBuilder builder = new StringBuilder(""+org.getId())
-				.append("_All_Contacts");
-		groupService.save(new Group(builder.toString(), org));
+//		final StringBuilder builder = new StringBuilder(""+org.getId())
+//				.append("_All_Contacts");
+		groupService.save(new Group_("All_Contacts", org));
 		
 		final User newUser = userService.save(new User(user.getSurname(), user.getOtherNames(), 
 				user.getEmail(), org));

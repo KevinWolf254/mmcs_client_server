@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import co.ke.proaktiv.io.models.Group;
+import co.ke.proaktiv.io.models.Group_;
 import co.ke.proaktiv.io.models.Organisation;
 import co.ke.proaktiv.io.models.Subscriber;
 import co.ke.proaktiv.io.pojos.SubscriberReport;
@@ -67,7 +67,7 @@ public class SubscriberController {
 	public ResponseEntity<Object> save(@RequestBody final Subscriber_ sub, 
 			@PathVariable("groupId") final Long id){
 
-		final Optional<Group> group = groupService.findById(id);
+		final Optional<Group_> group = groupService.findById(id);
 		if(!contactService.validate(sub) || !group.isPresent())
 			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
 		final Subscriber response = contactService.save(sub, group.get());
@@ -78,7 +78,7 @@ public class SubscriberController {
 	public ResponseEntity<Object> save(@RequestPart("file") final MultipartFile csvfile, 
 			@PathVariable("groupId") final Long id){
 		
-		final Optional<Group> group = groupService.findById(id);
+		final Optional<Group_> group = groupService.findById(id);
 		if(!group.isPresent())
 			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
 		final Set<Subscriber>  response = contactService.save(csvfile, group.get());
@@ -88,7 +88,7 @@ public class SubscriberController {
 	@GetMapping(value = "/secure/subscriber")
 	public ResponseEntity<Object> findAll(){
 		final Organisation org = userService.getSignedInUser().getOrganisation();
-		final Set<Group> groups = groupService.findByOrganisationId(org.getId());
+		final Set<Group_> groups = groupService.findByOrganisationId(org.getId());
 		final Set<Long> groupIds = groups.stream()
 				.map(group -> group.getId())
 				.collect(Collectors.toSet());

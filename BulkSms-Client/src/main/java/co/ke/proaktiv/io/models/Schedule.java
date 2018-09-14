@@ -65,7 +65,7 @@ public class Schedule {
 			@JoinTable(name="group_schedule",
 				inverseJoinColumns=@JoinColumn(name = "group_id"),
 				joinColumns=@JoinColumn(name = "schedule_id"))
-	private Set<Group> groups = new HashSet<Group>();
+	private Set<Group_> groups = new HashSet<Group_>();
 	
 	public Schedule() {
 		super();
@@ -208,11 +208,11 @@ public class Schedule {
 	}
 	
 	@JsonIgnore
-	public Set<Group> getGroups() {
+	public Set<Group_> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(Set<Group> groups) {
+	public void setGroups(Set<Group_> groups) {
 		this.groups = groups;
 	}
 

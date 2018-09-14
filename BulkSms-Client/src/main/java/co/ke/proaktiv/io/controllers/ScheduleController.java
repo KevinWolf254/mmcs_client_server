@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.ke.proaktiv.io.models.Group;
+import co.ke.proaktiv.io.models.Group_;
 import co.ke.proaktiv.io.models.Organisation;
 import co.ke.proaktiv.io.models.Schedule;
 import co.ke.proaktiv.io.pojos.Sms;
@@ -68,10 +68,10 @@ public class ScheduleController {
 		if(sms.getGroupIds() == null) {
 			final StringBuilder gName = new StringBuilder(""+org.getId())
 				.append("_All_Contacts");
-			final Group group = groupService.findByName(gName.toString()).get();
+			final Group_ group = groupService.findByName(gName.toString()).get();
 			sched = scheduleService.save(org.getName(), schedule, sms.getMessage(), group);
 		}else {
-			final Set<Group> groups = sms.getGroupIds().stream()
+			final Set<Group_> groups = sms.getGroupIds().stream()
 			.map(id->groupService.findById(id).get())
 			.collect(Collectors.toSet());
 			sched = scheduleService.save(org.getName(), schedule, sms.getMessage(), groups);

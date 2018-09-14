@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 
-import co.ke.proaktiv.io.models.Group;
+import co.ke.proaktiv.io.models.Group_;
 import co.ke.proaktiv.io.models.Organisation;
 import co.ke.proaktiv.io.models.Schedule;
 import co.ke.proaktiv.io.models.Text;
@@ -69,7 +69,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 	}
 	
 	@Override
-	public Schedule save(final String orgName, final _Schedule _schedule, final String message, final Group group){
+	public Schedule save(final String orgName, final _Schedule _schedule, final String message, final Group_ group){
 		final Organisation org = orgService.findByName(orgName).get();
 		final Schedule schedule = convert(_schedule);
 		schedule.getGroups().add(group);
@@ -100,7 +100,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 	}
 	
 	@Override
-	public Schedule save(final String orgName, final _Schedule _schedule, final String message, final Set<Group> groups){
+	public Schedule save(final String orgName, final _Schedule _schedule, final String message, final Set<Group_> groups){
 		final Organisation org = orgService.findByName(orgName).get();
 		final Schedule schedule = convert(_schedule);
 		schedule.setGroups(groups);
@@ -130,7 +130,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 		final String message = schedule.getText().getMessage();
 		final User user = userService.findByEmail(schedule.getCreatedBy()).get();
 		
-		final Set<Group> groups = schedule.getGroups();
+		final Set<Group_> groups = schedule.getGroups();
 		final Set<Long> groupIds = groups.stream()
 				.map(group -> group.getId())
 				.collect(Collectors.toSet());
@@ -141,7 +141,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 	@Override
 	public Set<_ScheduleDetails> findAll(final String scheduleGroup) {
 		final Organisation org = userService.getSignedInUser().getOrganisation();
-		final Set<Group> groups = groupService.findByOrganisationId(org.getId());
+		final Set<Group_> groups = groupService.findByOrganisationId(org.getId());
 		
 		final Set<Schedule> schedules = groups.stream()
 				.map(group -> group.getSchedules())

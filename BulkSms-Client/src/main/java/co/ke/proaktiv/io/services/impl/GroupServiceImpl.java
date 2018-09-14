@@ -6,7 +6,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import co.ke.proaktiv.io.models.Group;
+import co.ke.proaktiv.io.models.Group_;
 import co.ke.proaktiv.io.pojos.response.Response;
 import co.ke.proaktiv.io.repository.GroupRepository;
 import co.ke.proaktiv.io.services.GroupService;
@@ -22,24 +22,24 @@ public class GroupServiceImpl implements GroupService {
 	private UserService userService;	
 
 	@Override
-	public Group save(final Group group) {
+	public Group_ save(final Group_ group) {
 		return repository.save(group);
 	}
 	
 	@Override
-	public Set<Group> findByOrganisationId(final Long id) {
+	public Set<Group_> findByOrganisationId(final Long id) {
 		return repository.findByOrganisationId(id);
 	}
 
 	@Override
-	public Optional<Group> findByName(final String name) {
+	public Optional<Group_> findByName(final String name) {
 		final Long id = userService.getSignedInUser().getOrganisation().getId();
 		return repository.findByName(id+"_"+name);
 	} 
 
 	@Override
 	public Response delete(Long id) {
-		Optional<Group> group = repository.findById(id);
+		Optional<Group_> group = repository.findById(id);
 		if(!group.isPresent())
 			return new Response(400, "failed", "group is non-existant");
 		repository.delete(group.get());	
@@ -47,7 +47,7 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public Optional<Group> findById(Long id) {
+	public Optional<Group_> findById(Long id) {
 		return repository.findById(id);
 	}
 	

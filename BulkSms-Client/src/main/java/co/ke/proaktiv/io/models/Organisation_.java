@@ -17,7 +17,7 @@ public abstract class Organisation_ {
 	
 	public static volatile SingularAttribute<Organisation, Set<Subscriber>> subscribers;
 	
-	public static volatile SingularAttribute<Organisation, Set<Group>> groups;
+	public static volatile SingularAttribute<Organisation, Set<Group_>> groups;
 	
 	public static volatile SingularAttribute<Organisation, Set<DeliveryReport>> deliveryReports;
 }

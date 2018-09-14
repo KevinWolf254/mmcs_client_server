@@ -14,5 +14,5 @@ public abstract class Subscriber_ {
 	public static volatile SingularAttribute<Subscriber, String> serviceProvider;
 	public static volatile SingularAttribute<Subscriber, String> number;
 	public static volatile SingularAttribute<Subscriber, ServiceProvider> category;
-	public static volatile SingularAttribute<Subscriber, Set<Group>> groups;
+	public static volatile SingularAttribute<Subscriber, Set<Group_>> groups;
 }

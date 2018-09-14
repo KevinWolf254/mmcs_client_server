@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.ke.proaktiv.io.models.Group;
+import co.ke.proaktiv.io.models.Group_;
 import co.ke.proaktiv.io.pojos.response.GroupResponse;
 import co.ke.proaktiv.io.pojos.response.Response;
 import co.ke.proaktiv.io.services.GroupService;
@@ -29,13 +29,13 @@ public class GroupController {
 	@GetMapping(value = "/secure/group")
 	public ResponseEntity<Object> getGroups(){
 		final Long id = userService.getSignedInUser().getOrganisation().getId();
-		final Set<Group> groups = groupService.findByOrganisationId(id);
+		final Set<Group_> groups = groupService.findByOrganisationId(id);
 		return new ResponseEntity<Object>(groups, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/secure/group")
 	public ResponseEntity<Object> save(@RequestParam("name") String name) {
-		final Optional<Group> group = groupService.findByName(name);
+		final Optional<Group_> group = groupService.findByName(name);
 		if(group.isPresent())
 			return new ResponseEntity<Object>(new Response(400, "failed", "kindly try another name"), 
 					HttpStatus.BAD_REQUEST);
@@ -46,7 +46,7 @@ public class GroupController {
 	
 	@GetMapping(value = "/secure/group/{name}")
 	public ResponseEntity<Object> findByName(@PathVariable("name") String name) {
-		final Optional<Group> group = groupService.findByName(name);		
+		final Optional<Group_> group = groupService.findByName(name);		
 		if(group.isPresent())
 			return new ResponseEntity<Object>(new Response(400, "failed", "kindly try another name"), 
 					HttpStatus.BAD_REQUEST);
