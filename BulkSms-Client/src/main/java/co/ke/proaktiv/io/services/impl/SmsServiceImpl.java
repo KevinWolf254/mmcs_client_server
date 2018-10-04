@@ -16,7 +16,7 @@ import co.ke.proaktiv.io.models.Organisation;
 import co.ke.proaktiv.io.models.Subscriber;
 import co.ke.proaktiv.io.models.User;
 import co.ke.proaktiv.io.pojos.SmsInfo;
-import co.ke.proaktiv.io.pojos.SubscriberReport;
+import co.ke.proaktiv.io.pojos.ServiceProviderReport;
 import co.ke.proaktiv.io.pojos.response.SmsDeliveryResponse;
 import co.ke.proaktiv.io.services.DeliveryReportService;
 import co.ke.proaktiv.io.services.SmsService;
@@ -44,8 +44,8 @@ public class SmsServiceImpl implements SmsService{
 		
 		final Set<Subscriber> subs = subService.findAll(id);
 		
-		final String recipients = subService.convert(subs);
-		final Set<SubscriberReport> report = subService.createReport(subs);
+		final String recipients = subService.toString(subs);
+		final Set<ServiceProviderReport> report = subService.createReport(subs);
 		
 		final SmsDeliveryResponse dReport = send(new SmsInfo(senderEmail, recipients, report, message));
 		
@@ -61,9 +61,9 @@ public class SmsServiceImpl implements SmsService{
 		final String senderEmail = user.getEmail();
 		
 		final Set<Subscriber> subs = subService.findByGroupsIds(groupIds);
-		final String recipients = subService.convert(subs);
+		final String recipients = subService.toString(subs);
 		
-		final Set<SubscriberReport> report = subService.createReport(subs);
+		final Set<ServiceProviderReport> report = subService.createReport(subs);
 		
 		final SmsDeliveryResponse dReport = send(new SmsInfo(senderEmail, recipients, report, message));
 		
@@ -80,6 +80,6 @@ public class SmsServiceImpl implements SmsService{
 		final HttpEntity<SmsInfo> body = new 
 				HttpEntity<SmsInfo>(smsInfo, header);
 		
-		return restTemplate.exchange(URI + "/sms", HttpMethod.POST, body, SmsDeliveryResponse.class).getBody();
+		return new SmsDeliveryResponse();//restTemplate.exchange(URI + "/sms", HttpMethod.POST, body, SmsDeliveryResponse.class).getBody();
 	}
 }

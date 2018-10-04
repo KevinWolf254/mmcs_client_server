@@ -11,6 +11,7 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,11 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.ke.proaktiv.io.models.DeliveryReport;
 import co.ke.proaktiv.io.models.Organisation;
+import co.ke.proaktiv.io.models.User;
 import co.ke.proaktiv.io.pojos.Sale;
 import co.ke.proaktiv.io.pojos.reports.ReportRequest;
 import co.ke.proaktiv.io.services.DeliveryReportService;
-import co.ke.proaktiv.io.services.OrganisationService;
 import co.ke.proaktiv.io.services.PaymentService;
+import co.ke.proaktiv.io.services.UserService;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -47,7 +49,7 @@ public class FileController {
 	@Autowired
 	private DeliveryReportService reportService;
 	@Autowired
-	private OrganisationService orgService;
+	private UserService userService;
 	@Autowired
 	private PaymentService paymentService;
 	
@@ -85,24 +87,26 @@ public class FileController {
 			final JasperReport report = JasperCompileManager.compileReport(design);			
 	      
 			final Map<String, Object> params = new HashMap<>();
-		    final Organisation org = orgService.findByName(request.getOrganisation()).get();
-		    
-		    final List<DeliveryReport> deliveryReport = reportService
-		    		.search(request.getFrom(), request.getTo(), org.getId());
-		    
-		    final JRDataSource jrdatasource = new JRBeanCollectionDataSource(deliveryReport);
-
-			params.put("datasource", jrdatasource);			
-
-		    final JasperPrint jasperPrint = JasperFillManager.fillReport(report, params, jrdatasource);
-
-			response.setContentType("application/x-pdf");
-			response.setHeader(HttpHeaders.CONTENT_DISPOSITION,String
-							.format("attachment; filename=delivery_report.pdf"));			
-			
-			final OutputStream outputStream = response.getOutputStream();
-			JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);	
-			
+			final Optional<User> user = userService.findByEmail(request.getEmail());
+			if(user.isPresent()) {				
+			    final Organisation org = user.get().getOrganisation();
+			    
+			    final List<DeliveryReport> deliveryReport = reportService
+			    		.search(request.getFrom(), request.getTo(), org.getId());
+			    
+			    final JRDataSource jrdatasource = new JRBeanCollectionDataSource(deliveryReport);
+	
+				params.put("datasource", jrdatasource);			
+	
+			    final JasperPrint jasperPrint = JasperFillManager.fillReport(report, params, jrdatasource);
+	
+				response.setContentType("application/x-pdf");
+				response.setHeader(HttpHeaders.CONTENT_DISPOSITION,String
+								.format("attachment; filename=delivery_report.pdf"));			
+				
+				final OutputStream outputStream = response.getOutputStream();
+				JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);	
+			}
 	    } catch (JRException e) {
 	    	e.printStackTrace();
 	    } catch (FileNotFoundException e) {
@@ -114,7 +118,7 @@ public class FileController {
 	
 	@PostMapping(value = "/reportPDF/purchase")
 	public void getPurchaseReport(HttpServletResponse response,
-								  @RequestBody final ReportRequest searchParams){
+								  @RequestBody final ReportRequest request){
 		 try {
 		    	final InputStream jasperStream = this.getClass()
 		    						.getResourceAsStream("/reports/purchase_report.jrxml");
@@ -122,26 +126,28 @@ public class FileController {
 				final JasperReport report = JasperCompileManager.compileReport(design);			
 		      
 			    final Map<String, Object> params = new HashMap<>();
-			    final Organisation org = orgService.findByName(searchParams.getOrganisation()).get();
+				final Optional<User> user = userService.findByEmail(request.getEmail());
+				if(user.isPresent()) {				
+				    final Organisation org = user.get().getOrganisation();
 			    
-			    //retrieve all purchase from aeon_api
-			    final List<Sale> purchases = paymentService
-			    		.search(searchParams.getFrom(), searchParams.getTo(), org.getId());
-
-			    final JRDataSource jrdatasource = new JRBeanCollectionDataSource(purchases);
-
-				params.put("datasource", jrdatasource);			
-
-			    final JasperPrint jasperPrint = JasperFillManager
-			    					.fillReport(report, params, jrdatasource);
-
-				response.setContentType("application/x-pdf");
-				response.setHeader(HttpHeaders.CONTENT_DISPOSITION,String
-									.format("attachment; filename=purchase_report.pdf"));			
-				
-				final OutputStream outputStream = response.getOutputStream();
-				JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);	
-				
+				    //retrieve all purchase from aeon_api
+				    final List<Sale> purchases = paymentService
+				    		.search(request.getFrom(), request.getTo(), org.getId());
+	
+				    final JRDataSource jrdatasource = new JRBeanCollectionDataSource(purchases);
+	
+					params.put("datasource", jrdatasource);			
+	
+				    final JasperPrint jasperPrint = JasperFillManager
+				    					.fillReport(report, params, jrdatasource);
+	
+					response.setContentType("application/x-pdf");
+					response.setHeader(HttpHeaders.CONTENT_DISPOSITION,String
+										.format("attachment; filename=purchase_report.pdf"));			
+					
+					final OutputStream outputStream = response.getOutputStream();
+					JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);	
+				}
 		    } catch (JRException e) {
 		    	e.printStackTrace();
 		    } catch (FileNotFoundException e) {

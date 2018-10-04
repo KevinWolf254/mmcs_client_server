@@ -1,26 +1,26 @@
 package co.ke.proaktiv.io.pojos.response;
 
-import co.ke.proaktiv.io.pojos.pro.ClientAdmin;
+import co.ke.proaktiv.io.pojos.pro.ClientUser;
 
 public class AdminResponse extends Response {
 
-	private ClientAdmin admin;
+	private ClientUser admin;
 
 	public AdminResponse() {
 		super();
 	}
 
 	public AdminResponse(int code, String title, 
-			String message, ClientAdmin admin) {
+			String message, ClientUser admin) {
 		super(code, title, message);
 		this.admin = admin;
 	}
 
-	public ClientAdmin getAdmin() {
+	public ClientUser getAdmin() {
 		return admin;
 	}
 
-	public void setAdmin(ClientAdmin admin) {
+	public void setAdmin(ClientUser admin) {
 		this.admin = admin;
 	}
 	

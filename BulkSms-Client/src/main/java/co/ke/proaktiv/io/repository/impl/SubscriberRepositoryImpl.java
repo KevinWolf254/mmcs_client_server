@@ -6,8 +6,15 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
+import co.ke.proaktiv.io.models.Country;
+import co.ke.proaktiv.io.models.Country_;
+import co.ke.proaktiv.io.models.Prefix;
+import co.ke.proaktiv.io.models.Prefix_;
+import co.ke.proaktiv.io.models.ServiceProvider;
+import co.ke.proaktiv.io.models.ServiceProvider_;
 import co.ke.proaktiv.io.models.Subscriber;
 import co.ke.proaktiv.io.models.Subscriber_;
 import co.ke.proaktiv.io.repository.custom.SubscriberRepositoryCustom;
@@ -17,36 +24,30 @@ public class SubscriberRepositoryImpl implements SubscriberRepositoryCustom{
 	private EntityManagerFactory factory;
 	
 	@Override
-	public Subscriber findByCodePhoneNo(final String code, final String serviceProvider, 
-			final String number) {
+	public Subscriber find(final String code, final String prefix, final String number) {
 		final EntityManager manager = factory.createEntityManager();
 		Subscriber result_contact = null;
 		try {
 			final CriteriaBuilder builder = manager.getCriteriaBuilder();
 			final CriteriaQuery<Subscriber> query = builder.createQuery(Subscriber.class);
-			final Root<Subscriber> contact = query.from(Subscriber.class);
-			query.where(builder.equal(contact
-							.get(Subscriber_.code), code),
-					(builder.and(builder.equal(contact
-							.get(Subscriber_.serviceProvider), serviceProvider))),
-					builder.and(builder.equal(contact
-							.get(Subscriber_.number), number)));
+			final Root<Subscriber> root = query.from(Subscriber.class);
+			
+			final Join<Subscriber, Prefix> joinPrefix = root.join(Subscriber_.prefix);
+			
+			final Join<Subscriber, ServiceProvider> joinSP = root.join(Subscriber_.serviceProvider);
+			final Join<ServiceProvider, Country> joinCountry = joinSP.join(ServiceProvider_.country);
+
+			query.where(builder.equal(joinCountry.get(Country_.code), code),
+					(builder.and(builder.equal(joinPrefix.get(Prefix_.number), code))),
+					builder.and(builder.equal(root.get(Subscriber_.number), number)));
 			
 			result_contact = manager.createQuery(query).getSingleResult();
 			
 		} catch(NoResultException nre){
-			return result_contact;
+			return new Subscriber();
 		}finally {
 			manager.close();
 		}
 		return result_contact;
-	}
-
-	@Override
-	public boolean exists(String code, String serviceProvider, String number) {
-		final Subscriber subscriber = findByCodePhoneNo(code, serviceProvider, number);
-		if(subscriber.equals(null))
-			return false;
-		return true;
 	}
 }

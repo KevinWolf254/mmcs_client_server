@@ -22,7 +22,7 @@ property="id")
 @Table(name="delivery_report")
 public class DeliveryReport {
 	@Id 
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
 	private Long id;
 	

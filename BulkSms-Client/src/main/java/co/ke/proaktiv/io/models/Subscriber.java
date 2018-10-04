@@ -13,13 +13,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
-import co.ke.proaktiv.io.pojos.helpers.ServiceProvider;
 
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Entity
@@ -27,21 +26,27 @@ import co.ke.proaktiv.io.pojos.helpers.ServiceProvider;
 public class Subscriber {
 	
 	@Id 
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
 	private Long id;
-	
-	@Column(name="code", length = 4, nullable = false)
-	private String code;
-	
-	@Column(name="service_provider", length = 3, nullable = false)
-	private String serviceProvider;
 	
 	@Column(name="number", length = 6, nullable = false)
 	private String number;
 	
-	@Column(name="category",nullable = false)
-	private ServiceProvider category;
+	@Column(name="full_phone_no", length = 13, nullable = false, unique=true)
+	private String fullPhoneNo;
+	
+	@ManyToOne
+	(fetch = FetchType.LAZY, 
+			cascade = {CascadeType.PERSIST, CascadeType.MERGE})	
+	@JoinColumn(name = "service_provider_id", nullable = false)
+	private ServiceProvider serviceProvider;
+	
+	@ManyToOne
+	(fetch = FetchType.LAZY, 
+			cascade = {CascadeType.PERSIST, CascadeType.MERGE})	
+	@JoinColumn(name = "prefix_id", nullable = false)
+	private Prefix prefix;
 	
 	@ManyToMany(fetch = FetchType.LAZY, 
 	cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -53,89 +58,63 @@ public class Subscriber {
 	public Subscriber() {
 		super();
 	}
-	
-	public Subscriber(String code, String serviceProvider, String number, 
-			ServiceProvider category, Group_ group) {
+	public Subscriber(ServiceProvider sp, Prefix prefix, String number, Group_ group) {
 		super();
-		this.code = code;
-		this.serviceProvider = serviceProvider;
+		this.serviceProvider = sp;
+		this.prefix = prefix;
 		this.number = number;
-		this.category = category;
-		getGroups().add(group);
+		this.fullPhoneNo = combine(sp.getCountry().getCode(), prefix.getNumber(), number);
+		this.groups.add(group);
 	}
-
 	public Long getId() {
 		return id;
 	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getServiceProvider() {
-		return serviceProvider;
-	}
-
-	public void setServiceProvider(String serviceProvider) {
-		this.serviceProvider = serviceProvider;
-	}
-
 	public String getNumber() {
 		return number;
 	}
-
-	public void setNumber(String subscriberNumber) {
-		this.number = subscriberNumber;
+	public void setNumber(String number) {
+		this.number = number;
 	}
-	
-	public ServiceProvider getCategory() {
-		return category;
+	public String getFullPhoneNo() {
+		return fullPhoneNo;
 	}
-
-	public void setCategory(ServiceProvider category) {
-		this.category = category;
+	public void setFullPhoneNo(String fullPhoneNo) {
+		this.fullPhoneNo = fullPhoneNo;
 	}
-
+	public ServiceProvider getServiceProvider() {
+		return serviceProvider;
+	}
+	public void setServiceProvider(ServiceProvider serviceProvider) {
+		this.serviceProvider = serviceProvider;
+	}
+	public Prefix getPrefix() {
+		return prefix;
+	}
+	public void setPrefix(Prefix prefix) {
+		this.prefix = prefix;
+	}
 	@JsonIgnore
 	public Set<Group_> getGroups() {
 		return groups;
 	}
-
 	public void setGroups(Set<Group_> groups) {
 		this.groups = groups;
 	}
-
-	@Override
-	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("MobilePhone [countryCode=")
-				.append(code)
-				.append(", serviceProvider=")
-				.append(serviceProvider)
-				.append(", number=")
-				.append(number)
-				.append("]");
+	private String combine(String code, String prefix, String number) {
+		final StringBuilder builder = new StringBuilder(code)
+				.append(prefix).append(number);
 		return builder.toString();
 	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		result = prime * result + ((number == null) ? 0 : number.hashCode());
-		result = prime * result + ((serviceProvider == null) ? 0 : serviceProvider.hashCode());
+		result = prime * result + ((fullPhoneNo == null) ? 0 : fullPhoneNo.hashCode());
 		return result;
 	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -145,20 +124,10 @@ public class Subscriber {
 		if (getClass() != obj.getClass())
 			return false;
 		Subscriber other = (Subscriber) obj;
-		if (code == null) {
-			if (other.code != null)
+		if (fullPhoneNo == null) {
+			if (other.fullPhoneNo != null)
 				return false;
-		} else if (!code.equals(other.code))
-			return false;
-		if (number == null) {
-			if (other.number != null)
-				return false;
-		} else if (!number.equals(other.number))
-			return false;
-		if (serviceProvider == null) {
-			if (other.serviceProvider != null)
-				return false;
-		} else if (!serviceProvider.equals(other.serviceProvider))
+		} else if (!fullPhoneNo.equals(other.fullPhoneNo))
 			return false;
 		return true;
 	}	

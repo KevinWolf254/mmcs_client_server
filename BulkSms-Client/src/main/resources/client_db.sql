@@ -1,185 +1,339 @@
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
+-- MySQL Workbench Forward Engineering
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
-CREATE DATABASE IF NOT EXISTS `client_bulksms_db` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `client_bulksms_db`;
+-- -----------------------------------------------------
+-- Schema mmcs_client_db_v3
+-- -----------------------------------------------------
 
-CREATE TABLE `contact` (
-  `id` int(11) NOT NULL,
-  `country_code` varchar(255) NOT NULL,
-  `phone_number` varchar(9) NOT NULL,
-  `tele_com` tinyint(4) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+-- -----------------------------------------------------
+-- Schema mmcs_client_db_v3
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mmcs_client_db_v3` ;
+USE `mmcs_client_db_v3` ;
 
-CREATE TABLE `contacts_grouped` (
-  `group_fk` int(11) NOT NULL,
-  `contact_fk` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+-- -----------------------------------------------------
+-- Table `mmcs_client_db_v3`.`country`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mmcs_client_db_v3`.`country` ;
 
-CREATE TABLE `contact_group` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-CREATE TABLE `delivery_report` (
-  `id` int(11) NOT NULL,
-  `message_id` varchar(255) NOT NULL,
-  `received` int(11) NOT NULL,
-  `rejected` int(11) NOT NULL,
-  `currency` tinyint(4) NOT NULL,
-  `cost` double NOT NULL,
-  `date` datetime NOT NULL,
-  `phone_nos_rejected` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE `organisation` (
-  `id` int(11) NOT NULL,
-  `number` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE `org_contacts` (
-  `org_fk` int(11) NOT NULL,
-  `client_fk` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE `org_contact_groups` (
-  `org_fk` int(11) NOT NULL,
-  `group_fk` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE `org_delivery_report` (
-  `org_fk` int(11) NOT NULL,
-  `delivery_report_fk` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE `org_schedules` (
-  `org_fk` int(11) NOT NULL,
-  `schedule_fk` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE `org_users` (
-  `org_fk` int(11) NOT NULL,
-  `user_fk` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE `schedule` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `type` tinyint(4) NOT NULL,
-  `date` datetime NOT NULL,
-  `day_of_week` tinyint(4) DEFAULT NULL,
-  `day_of_month` int(11) NOT NULL,
-  `cron_expression` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE `schedule_groups` (
-  `schedule_fk` int(11) NOT NULL,
-  `group_fk` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE `text` (
-  `id` int(11) NOT NULL,
-  `message` varchar(255) NOT NULL,
-  `schedule` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE `user` (
-  `id` int(11) NOT NULL,
-  `surname` varchar(255) NOT NULL,
-  `other_names` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE `user_credentials` (
-  `id` int(11) NOT NULL,
-  `is_active` tinyint(4) NOT NULL,
-  `is_signed_in` tinyint(4) NOT NULL,
-  `role` varchar(15) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `last_sign_in_date` datetime DEFAULT NULL,
-  `current_sign_in_date` datetime DEFAULT NULL,
-  `user_profile` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`country` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  `code` VARCHAR(4) NOT NULL,
+  `currency` VARCHAR(3) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `currency_UNIQUE` (`currency` ASC) VISIBLE,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE,
+  UNIQUE INDEX `code_UNIQUE` (`code` ASC) VISIBLE)
+ENGINE = InnoDB;
 
 
-ALTER TABLE `contact`
-  ADD PRIMARY KEY (`id`);
+-- -----------------------------------------------------
+-- Table `mmcs_client_db_v3`.`organisation`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mmcs_client_db_v3`.`organisation` ;
 
-ALTER TABLE `contacts_grouped`
-  ADD PRIMARY KEY (`group_fk`,`contact_fk`);
-
-ALTER TABLE `contact_group`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);
-
-ALTER TABLE `delivery_report`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `message_id` (`message_id`);
-
-ALTER TABLE `organisation`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `number` (`number`),
-  ADD UNIQUE KEY `name` (`name`);
-
-ALTER TABLE `org_contacts`
-  ADD PRIMARY KEY (`org_fk`,`client_fk`);
-
-ALTER TABLE `org_contact_groups`
-  ADD PRIMARY KEY (`org_fk`,`group_fk`);
-
-ALTER TABLE `org_delivery_report`
-  ADD PRIMARY KEY (`org_fk`,`delivery_report_fk`);
-
-ALTER TABLE `org_schedules`
-  ADD PRIMARY KEY (`org_fk`,`schedule_fk`);
-
-ALTER TABLE `org_users`
-  ADD PRIMARY KEY (`org_fk`,`user_fk`),
-  ADD KEY `user_fk` (`user_fk`);
-
-ALTER TABLE `schedule`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);
-
-ALTER TABLE `schedule_groups`
-  ADD PRIMARY KEY (`schedule_fk`,`group_fk`),
-  ADD KEY `group_fk` (`group_fk`),
-  ADD KEY `schedule_fk` (`schedule_fk`);
-
-ALTER TABLE `text`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
-
-ALTER TABLE `user_credentials`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_profile` (`user_profile`);
+CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`organisation` (
+  `id` INT(11) NOT NULL,
+  `name` VARCHAR(45) NOT NULL,
+  `country_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE,
+  INDEX `fk_organisation_country1_idx` (`country_id` ASC) VISIBLE,
+  CONSTRAINT `fk_organisation_country1`
+    FOREIGN KEY (`country_id`)
+    REFERENCES `mmcs_client_db_v3`.`country` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
 
-ALTER TABLE `contact`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
-ALTER TABLE `contact_group`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-ALTER TABLE `delivery_report`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-ALTER TABLE `organisation`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
-ALTER TABLE `schedule`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
-ALTER TABLE `text`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
-ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=210;
-ALTER TABLE `user_credentials`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=310;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- -----------------------------------------------------
+-- Table `mmcs_client_db_v3`.`delivery_report`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mmcs_client_db_v3`.`delivery_report` ;
+
+CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`delivery_report` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `messageId` VARCHAR(45) NOT NULL,
+  `received` INT(11) NOT NULL,
+  `rejected` INT(11) NOT NULL,
+  `phone_nos_rejected` VARCHAR(255) NULL DEFAULT NULL,
+  `date` DATETIME NULL DEFAULT NULL,
+  `organisation_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `messageId_UNIQUE` (`messageId` ASC) VISIBLE,
+  INDEX `fk_delivery_report_organisation1_idx` (`organisation_id` ASC) VISIBLE,
+  CONSTRAINT `fk_delivery_report_organisation1`
+    FOREIGN KEY (`organisation_id`)
+    REFERENCES `mmcs_client_db_v3`.`organisation` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `mmcs_client_db_v3`.`group_`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mmcs_client_db_v3`.`group_` ;
+
+CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`group_` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL DEFAULT NULL,
+  `organisation_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE,
+  INDEX `fk_Group_organisation1_idx` (`organisation_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Group_organisation1`
+    FOREIGN KEY (`organisation_id`)
+    REFERENCES `mmcs_client_db_v3`.`organisation` (`id`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `mmcs_client_db_v3`.`schedule`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mmcs_client_db_v3`.`schedule` ;
+
+CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`schedule` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL DEFAULT NULL,
+  `created_by` VARCHAR(45) NOT NULL,
+  `type` TINYINT(4) NOT NULL,
+  `date` DATETIME NULL DEFAULT NULL,
+  `day_of_week` TINYINT(4) NULL DEFAULT NULL,
+  `day_of_month` INT(11) NULL DEFAULT NULL,
+  `cron_expression` VARCHAR(15) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `mmcs_client_db_v3`.`group_schedule`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mmcs_client_db_v3`.`group_schedule` ;
+
+CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`group_schedule` (
+  `schedule_id` INT(11) NOT NULL,
+  `group_id` INT(11) NOT NULL,
+  PRIMARY KEY (`schedule_id`, `group_id`),
+  INDEX `fk_schedule_has_group_group1_idx` (`group_id` ASC) VISIBLE,
+  INDEX `fk_schedule_has_group_schedule1_idx` (`schedule_id` ASC) VISIBLE,
+  CONSTRAINT `fk_schedule_has_group_group1`
+    FOREIGN KEY (`group_id`)
+    REFERENCES `mmcs_client_db_v3`.`group_` (`id`),
+  CONSTRAINT `fk_schedule_has_group_schedule1`
+    FOREIGN KEY (`schedule_id`)
+    REFERENCES `mmcs_client_db_v3`.`schedule` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `mmcs_client_db_v3`.`service_provider`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mmcs_client_db_v3`.`service_provider` ;
+
+CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`service_provider` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  `country_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_service_provider_country1_idx` (`country_id` ASC) VISIBLE,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE,
+  CONSTRAINT `fk_service_provider_country1`
+    FOREIGN KEY (`country_id`)
+    REFERENCES `mmcs_client_db_v3`.`country` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mmcs_client_db_v3`.`prefix`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mmcs_client_db_v3`.`prefix` ;
+
+CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`prefix` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `number` VARCHAR(2) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `number_UNIQUE` (`number` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mmcs_client_db_v3`.`subscriber`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mmcs_client_db_v3`.`subscriber` ;
+
+CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`subscriber` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `number` VARCHAR(6) NOT NULL,
+  `full_phone_no` VARCHAR(13) NOT NULL,
+  `service_provider_id` INT NOT NULL,
+  `prefix_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_subscriber_service_provider1_idx` (`service_provider_id` ASC) VISIBLE,
+  INDEX `fk_subscriber_prefix1_idx` (`prefix_id` ASC) VISIBLE,
+  UNIQUE INDEX `full_phone_no_UNIQUE` (`full_phone_no` ASC) VISIBLE,
+  CONSTRAINT `fk_subscriber_service_provider1`
+    FOREIGN KEY (`service_provider_id`)
+    REFERENCES `mmcs_client_db_v3`.`service_provider` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_subscriber_prefix1`
+    FOREIGN KEY (`prefix_id`)
+    REFERENCES `mmcs_client_db_v3`.`prefix` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `mmcs_client_db_v3`.`group_subscriber`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mmcs_client_db_v3`.`group_subscriber` ;
+
+CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`group_subscriber` (
+  `group_id` INT(11) NOT NULL,
+  `subscriber_id` INT(11) NOT NULL,
+  PRIMARY KEY (`group_id`, `subscriber_id`),
+  INDEX `fk_Group_has_subscriber_subscriber1_idx` (`subscriber_id` ASC) VISIBLE,
+  INDEX `fk_Group_has_subscriber_Group1_idx` (`group_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Group_has_subscriber_Group1`
+    FOREIGN KEY (`group_id`)
+    REFERENCES `mmcs_client_db_v3`.`group_` (`id`),
+  CONSTRAINT `fk_Group_has_subscriber_subscriber1`
+    FOREIGN KEY (`subscriber_id`)
+    REFERENCES `mmcs_client_db_v3`.`subscriber` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `mmcs_client_db_v3`.`text`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mmcs_client_db_v3`.`text` ;
+
+CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`text` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `message` VARCHAR(360) NULL DEFAULT NULL,
+  `schedule_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_text_schedule1_idx` (`schedule_id` ASC) VISIBLE,
+  CONSTRAINT `fk_text_schedule1`
+    FOREIGN KEY (`schedule_id`)
+    REFERENCES `mmcs_client_db_v3`.`schedule` (`id`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `mmcs_client_db_v3`.`user`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mmcs_client_db_v3`.`user` ;
+
+CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`user` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `surname` VARCHAR(45) NULL DEFAULT NULL,
+  `other_names` VARCHAR(45) NULL DEFAULT NULL,
+  `email` VARCHAR(45) NOT NULL,
+  `organisation_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
+  INDEX `fk_user_organisation_idx` (`organisation_id` ASC) VISIBLE,
+  CONSTRAINT `fk_user_organisation`
+    FOREIGN KEY (`organisation_id`)
+    REFERENCES `mmcs_client_db_v3`.`organisation` (`id`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `mmcs_client_db_v3`.`user_credentials`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mmcs_client_db_v3`.`user_credentials` ;
+
+CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`user_credentials` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `enabled` TINYINT(4) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `sign_in` DATETIME NULL DEFAULT NULL,
+  `user_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_user_credentials_user1_idx` (`user_id` ASC) VISIBLE,
+  CONSTRAINT `fk_user_credentials_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `mmcs_client_db_v3`.`user` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `mmcs_client_db_v3`.`user_role`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mmcs_client_db_v3`.`user_role` ;
+
+CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`user_role` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `role` TINYINT(4) NOT NULL,
+  `credentials_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_user_role_user_credentials1_idx` (`credentials_id` ASC) VISIBLE,
+  CONSTRAINT `fk_user_role_user_credentials1`
+    FOREIGN KEY (`credentials_id`)
+    REFERENCES `mmcs_client_db_v3`.`user_credentials` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `mmcs_client_db_v3`.`service_provider_prefix`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mmcs_client_db_v3`.`service_provider_prefix` ;
+
+CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`service_provider_prefix` (
+  `service_provider_id` INT NOT NULL,
+  `prefix_id` INT NOT NULL,
+  PRIMARY KEY (`service_provider_id`, `prefix_id`),
+  INDEX `fk_service_provider_has_phone_no_prefix_phone_no_prefix1_idx` (`prefix_id` ASC) VISIBLE,
+  INDEX `fk_service_provider_has_phone_no_prefix_service_provider1_idx` (`service_provider_id` ASC) VISIBLE,
+  CONSTRAINT `fk_service_provider_has_phone_no_prefix_service_provider1`
+    FOREIGN KEY (`service_provider_id`)
+    REFERENCES `mmcs_client_db_v3`.`service_provider` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_service_provider_has_phone_no_prefix_phone_no_prefix1`
+    FOREIGN KEY (`prefix_id`)
+    REFERENCES `mmcs_client_db_v3`.`prefix` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

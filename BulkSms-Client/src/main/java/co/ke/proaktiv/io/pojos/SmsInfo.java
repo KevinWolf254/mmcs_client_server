@@ -6,13 +6,13 @@ public class SmsInfo {
 	
 	private String sender;
 	private String recipients;
-	private Collection<SubscriberReport> phoneNosTotals;
+	private Collection<ServiceProviderReport> phoneNosTotals;
 	private String message;
 	public SmsInfo() {
 		super();
 	}
 	public SmsInfo(String sender, String recipients, 
-			Collection<SubscriberReport> phoneNosTotals, String message) {
+			Collection<ServiceProviderReport> phoneNosTotals, String message) {
 		super();
 		this.sender = sender;
 		this.recipients = recipients;
@@ -37,10 +37,10 @@ public class SmsInfo {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	public Collection<SubscriberReport> getPhoneNosTotals() {
+	public Collection<ServiceProviderReport> getPhoneNosTotals() {
 		return phoneNosTotals;
 	}
-	public void setPhoneNosTotals(Collection<SubscriberReport> phoneNosTotals) {
+	public void setPhoneNosTotals(Collection<ServiceProviderReport> phoneNosTotals) {
 		this.phoneNosTotals = phoneNosTotals;
 	}
 }

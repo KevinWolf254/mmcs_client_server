@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class ReportRequest {
 
-	private String organisation;
+	private String email;
 	private Date from;
 	private Date to;
 	public ReportRequest() {
@@ -12,19 +12,19 @@ public class ReportRequest {
 	}
 	public ReportRequest(Date from, Date to) {
 		super();
-		this.organisation = "";
+		this.email = "";
 		this.from = from;
 		this.to = to;
 	}
 	public ReportRequest(String orgName, Date from, Date to) {
 		super();
-		this.organisation = orgName;
+		this.email = orgName;
 		this.from = from;
 		this.to = to;
 	}
 
-	public String getOrganisation() {
-		return organisation;
+	public String getEmail() {
+		return email;
 	}
 
 	public Date getFrom() {

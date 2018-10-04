@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import co.ke.proaktiv.io.pojos.helpers.Role;
@@ -22,7 +23,7 @@ import co.ke.proaktiv.io.pojos.helpers.Role;
 public class UserRole {
 	
 	@Id 
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
 	private Long id;
 	
@@ -82,6 +83,7 @@ public class UserRole {
 			this.role = Role.USER;
 	}
 	
+	@JsonIgnore
 	public UserCredentials getCredentials() {
 		return credentials;
 	}
@@ -120,5 +122,16 @@ public class UserRole {
 			return false;
 		return true;
 	}
-	
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("UserRole [id=")
+				.append(id)
+				.append(", role=")
+				.append(role)
+				.append(", credentials=")
+				.append(credentials)
+				.append("]");
+		return builder.toString();
+	}	
 }

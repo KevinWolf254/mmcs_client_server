@@ -12,4 +12,6 @@ public interface UserRoleService {
 	public Set<UserRole> findByUserCredentials(UserCredentials cred);
 	
 	public Set<UserRole>  findByUserCredentialsId(Long id);
+
+	public void delete(UserRole role);
 }

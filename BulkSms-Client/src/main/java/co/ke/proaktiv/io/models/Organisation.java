@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -42,59 +44,61 @@ public class Organisation {
 			cascade = CascadeType.ALL)
 	private Set<DeliveryReport> deliveryReports = new HashSet<DeliveryReport>();
 	
+	@ManyToOne
+	(fetch = FetchType.LAZY, 
+			cascade = {CascadeType.PERSIST, CascadeType.MERGE})	
+	@JoinColumn(name = "country_id", nullable = false)
+	private Country country;
+
 	public Organisation() {
 		super();
 	}
 
-	public Organisation(Long id, String name) {
+	public Organisation(Long id, String name, Country country) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.country = country;
 	}
-
 	public Long getId() {
 		return id;
 	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}
-
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
 	@JsonIgnore
 	public Set<User> getUsers() {
 		return users;
 	}
-
 	public void setUsers(Set<User> users) {
 		this.users = users;
 	}
-
 	@JsonIgnore
 	public Set<Group_> getGroups() {
 		return groups;
 	}
-
 	public void setGroups(Set<Group_> groups) {
 		this.groups = groups;
 	}
-
 	@JsonIgnore
 	public Set<DeliveryReport> getDeliveryReports() {
 		return deliveryReports;
 	}
-
 	public void setDeliveryReports(Set<DeliveryReport> deliveryReport) {
 		this.deliveryReports = deliveryReport;
+	}	
+	public Country getCountry() {
+		return country;
 	}
-
+	public void setCountry(Country country) {
+		this.country = country;
+	}
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();

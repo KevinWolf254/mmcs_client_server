@@ -22,5 +22,9 @@ public class Subscriber_ {
 	}
 	public void setNumber(String phoneNumber) {
 		this.number = phoneNumber;
+	}
+	@Override
+	public String toString() {
+		return "Subscriber_ [code=" + code + ", number=" + number + "]";
 	}	
 }

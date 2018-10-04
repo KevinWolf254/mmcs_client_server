@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import co.ke.proaktiv.io.models.Group_;
 import co.ke.proaktiv.io.models.Organisation;
 import co.ke.proaktiv.io.models.Subscriber;
-import co.ke.proaktiv.io.pojos.SubscriberReport;
+import co.ke.proaktiv.io.pojos.ServiceProviderReport;
 import co.ke.proaktiv.io.pojos.Subscriber_;
 import co.ke.proaktiv.io.pojos.reports.GroupIds;
 import co.ke.proaktiv.io.pojos.response.Response;
@@ -33,33 +33,35 @@ public class SubscriberController {
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private SubscriberService contactService;
+	private SubscriberService subscriberService;
 	@Autowired
 	private GroupService groupService;
 	
 	@GetMapping(value = "/secure/subscriber/{id}")
 	public ResponseEntity<Object> findByGroupId(@PathVariable("id") final Long id){
-		final Set<Subscriber> contacts = contactService.findByGroupsId(id);
+		final Set<Subscriber> contacts = subscriberService.findByGroupsId(id);
 		return new ResponseEntity<Object>(contacts, HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "/secure/subscribers/")
-	public ResponseEntity<Object> findByGroupIds(@RequestBody final GroupIds groupIds) {
-		final Set<Subscriber> response = contactService.findByGroupsIds(groupIds.getGroupIds());
-		return new ResponseEntity<>(response, HttpStatus.OK);
+	@PostMapping(value = "/secure/subscriber/groups")
+	public ResponseEntity<Object> findByGroupsId(@RequestBody final GroupIds groupIds) {
+		final Set<Subscriber> subs = subscriberService.findByGroupsIds(groupIds.getGroupIds());
+		final Set<ServiceProviderReport> report = subscriberService.createReport(subs);
+		return new ResponseEntity<>(report, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/secure/subscriber")
 	public ResponseEntity<Object> save(@RequestBody final Subscriber_ subscriber){
-		if(!contactService.validate(subscriber))
-			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-		final Subscriber response = contactService.save(subscriber);
+		if(!subscriberService.isValid(subscriber))
+			return new ResponseEntity<Object>(new Response(400, "failed", "invalid format"), 
+					HttpStatus.BAD_REQUEST);
+		final Subscriber response = subscriberService.save(subscriber);
 		return new ResponseEntity<Object>(response, HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "/secure/subscribers")
+	@PostMapping(value = "/secure/subscriber/file")
 	public ResponseEntity<Object> save(@RequestPart("file") final MultipartFile csvfile){
-		final Set<Subscriber> subs = contactService.save(csvfile);
+		final Set<Subscriber> subs = subscriberService.save(csvfile);
 		return new ResponseEntity<Object>(subs, HttpStatus.OK);
 	}
 	
@@ -68,20 +70,20 @@ public class SubscriberController {
 			@PathVariable("groupId") final Long id){
 
 		final Optional<Group_> group = groupService.findById(id);
-		if(!contactService.validate(sub) || !group.isPresent())
+		if(!subscriberService.isValid(sub) || !group.isPresent())
 			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-		final Subscriber response = contactService.save(sub, group.get());
+		final Subscriber response = subscriberService.save(sub, group.get());
 		return new ResponseEntity<Object>(response, HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "/secure/subscribers/{groupId}")
+	@PostMapping(value = "/secure/subscriber/file/{groupId}")
 	public ResponseEntity<Object> save(@RequestPart("file") final MultipartFile csvfile, 
 			@PathVariable("groupId") final Long id){
 		
 		final Optional<Group_> group = groupService.findById(id);
 		if(!group.isPresent())
 			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-		final Set<Subscriber>  response = contactService.save(csvfile, group.get());
+		final Set<Subscriber>  response = subscriberService.save(csvfile, group.get());
 		return new ResponseEntity<Object>(response, HttpStatus.OK);
 	}
 	
@@ -92,26 +94,29 @@ public class SubscriberController {
 		final Set<Long> groupIds = groups.stream()
 				.map(group -> group.getId())
 				.collect(Collectors.toSet());
-		final Set<Subscriber> subs = contactService.findByGroupsIds(groupIds);
-		final Set<SubscriberReport> report = contactService.createReport(subs);
+		final Set<Subscriber> subs = subscriberService.findByGroupsIds(groupIds);
+		final Set<ServiceProviderReport> report = subscriberService.createReport(subs);
 		return new ResponseEntity<Object>(report, HttpStatus.OK);
 	}
 	
-	@GetMapping(value = "/secure/contact/{code}/{phone}")
+	@GetMapping(value = "/secure/subscriber/{code}/{phone}")
 	public ResponseEntity<Object> exists(@PathVariable("code") final String code, 
 			@PathVariable("phone") final String phone_no){		
 		
-		final String provider = phone_no.substring(0, 2);
+		final String provider = phone_no.substring(0, 3);
 		final String number = phone_no.substring(3);
-		final boolean exists = contactService.exists(code, provider, number);
+		final StringBuilder builder = new StringBuilder(code)
+				.append(provider).append(number);
+		final Optional<Subscriber> sub = subscriberService.findByFullPhoneNo(builder.toString());
+		final boolean exists = sub.isPresent();
 		return new ResponseEntity<Object>(exists, HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "/secure/contact/remove")
+	@PostMapping(value = "/secure/subscriber/remove")
 	public ResponseEntity<Object> delete(@RequestParam("ContactId") final Long contact_id,
 			@RequestParam("GroupId") final Long group_id){
 		
-		final Response response = contactService.delete(contact_id, group_id);
+		final Response response = subscriberService.delete(contact_id, group_id);
 		return new ResponseEntity<Object>(response, HttpStatus.OK);
 	}
 

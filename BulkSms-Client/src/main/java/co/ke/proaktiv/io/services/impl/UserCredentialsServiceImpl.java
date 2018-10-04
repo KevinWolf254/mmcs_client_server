@@ -51,6 +51,11 @@ public class UserCredentialsServiceImpl implements UserCredentialsService{
 		cred.setPassword(encodedNewPass);
 		return save(cred);
 	}
-private static final Logger log = LoggerFactory.getLogger(UserCredentialsService.class);
-
+	
+	@Override
+	public void delete(UserCredentials cred) {
+		repository.delete(cred);	
+	}
+	
+	private static final Logger log = LoggerFactory.getLogger(UserCredentialsService.class);
 }

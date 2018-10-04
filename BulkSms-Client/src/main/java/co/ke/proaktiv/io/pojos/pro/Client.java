@@ -2,15 +2,16 @@ package co.ke.proaktiv.io.pojos.pro;
 
 import java.util.Date;
 
-import co.ke.proaktiv.io.pojos.helpers.Country;
+import co.ke.proaktiv.io.models.Country;
 
 public class Client {
 	
 	private Long id;	
-	private Country country;
-	private String name;
+	private String name;	
+	private double creditAmount;
     private boolean enabled;
     private Date createdOn;
+	private Country country;
 	public Client() {
 		super();
 	}
@@ -39,6 +40,12 @@ public class Client {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public double getCreditAmount() {
+		return creditAmount;
+	}
+	public void setCreditAmount(double creditAmount) {
+		this.creditAmount = creditAmount;
+	}
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -50,6 +57,11 @@ public class Client {
 	}
 	public void setCreatedOn(Date createdOn) {
 		this.createdOn = createdOn;
+	}
+	@Override
+	public String toString() {
+		return "Client [id=" + id + ", name=" + name + ", creditAmount=" + creditAmount + ", enabled=" + enabled
+				+ ", createdOn=" + createdOn + ", country=" + country + "]";
 	}
 	
 }

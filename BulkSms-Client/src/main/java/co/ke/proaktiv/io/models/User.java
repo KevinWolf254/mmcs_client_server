@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @Table(name="user")
 public class User {
 	@Id 
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
 	private Long id;
 
@@ -39,10 +39,6 @@ public class User {
 	@JoinColumn(name = "organisation_id", nullable = false)
 	private Organisation organisation;
 	
-//	@OneToOne(mappedBy = "profile",
-//	        cascade = CascadeType.ALL, orphanRemoval = true)
-//	private UserCredentials credentials;
-//	
 	public User() {
 		super();
 	}
@@ -53,7 +49,6 @@ public class User {
 		this.surname = user.getSurname();
 		this.otherNames = user.getOtherNames();
 		this.email = user.getEmail();
-//		this.credentials = user.getCredentials();
 		this.organisation = user.getOrganisation();
 	}
 	
@@ -63,15 +58,6 @@ public class User {
 		this.otherNames = otherNames;
 		this.email = email;
 	}
-
-//	public User(String surname, String otherNames, String email, Organisation employer) {
-//		super();
-//		this.surname = surname;
-//		this.otherNames = otherNames;
-//		this.email = email;
-//		this.organisation = employer;
-////		this.credentials = credentials;
-//	}
 	
 	public User(String surname, String otherNames, String email, Organisation employer) {
 		super();
@@ -121,14 +107,6 @@ public class User {
 	public void setOrganisation(Organisation org) {
 		this.organisation = org;
 	}
-//	@JsonIgnore
-//	public UserCredentials getCredentials() {
-//		return credentials;
-//	}
-//
-//	public void setCredentials(UserCredentials credentials) {
-//		this.credentials = credentials;
-//	}
 	
 	@Override
 	public String toString() {

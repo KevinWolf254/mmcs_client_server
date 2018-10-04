@@ -17,6 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import co.ke.proaktiv.io.models.Country;
 import co.ke.proaktiv.io.models.Group_;
 import co.ke.proaktiv.io.models.Organisation;
 import co.ke.proaktiv.io.models.User;
@@ -25,12 +26,12 @@ import co.ke.proaktiv.io.models.UserRole;
 import co.ke.proaktiv.io.pojos.AdminRole;
 import co.ke.proaktiv.io.pojos.helpers.Role;
 import co.ke.proaktiv.io.pojos.pro.Client;
-import co.ke.proaktiv.io.pojos.response.ClientResponse;
-import co.ke.proaktiv.io.pojos.response.SignUpResponse;
+import co.ke.proaktiv.io.pojos.response.Credit;
+import co.ke.proaktiv.io.pojos.response.SignUp;
 import co.ke.proaktiv.io.repository.OrganisationRepository;
+import co.ke.proaktiv.io.services.CountryService;
 import co.ke.proaktiv.io.services.GroupService;
 import co.ke.proaktiv.io.services.OrganisationService;
-import co.ke.proaktiv.io.services.ShortCodeService;
 import co.ke.proaktiv.io.services.UserCredentialsService;
 import co.ke.proaktiv.io.services.UserRoleService;
 import co.ke.proaktiv.io.services.UserService;
@@ -43,7 +44,7 @@ public class OrganisationServiceImpl implements OrganisationService{
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private ShortCodeService shortCodeService;	
+	private CountryService countryService;	
 	@Autowired
 	private UserCredentialsService credService;
 	@Autowired
@@ -73,30 +74,30 @@ public class OrganisationServiceImpl implements OrganisationService{
 	}
 	
 	@Override
-	public SignUpResponse save(final Client client, final AdminRole user, final String sc_name) {
+	public SignUp save(final Client client, final AdminRole user) {
 		
 		final Optional<User> user_ = userService.findByEmail(user.getEmail());
 		if(user_.isPresent()) 
-			return new SignUpResponse(400, "failed", "user already exist");
+			return new SignUp(400, "failed", "user already exist");
 		
 		final Optional<Organisation> client_ = repository.findByName(client.getName());
 		if(client_.isPresent()) 
-			return new SignUpResponse(400, "failed", "Organization already exist");
-		
-		if(shortCodeService.exists(sc_name)) 
-			return new SignUpResponse(400, "failed", "Sender Id already exist");
+			return new SignUp(400, "failed", "Organization already exist");
 	
-		final SignUpResponse report = create(client, user, sc_name);
+		final SignUp report = saveToApi(client, user);
 		if(report.getCode() == 400)
 			return report;
 		
+		log.info("response: "+report);
+		
 		final Client savedClient = report.getClient();
-		log.info("org id: "+savedClient.getId());
+		
+		final String countryName = report.getClient().getCountry().getName();
+		final Country country = countryService.findByName(countryName);
+		
 		final Organisation org = save(new Organisation(savedClient.getId(), 
-				savedClient.getName()));
+				savedClient.getName(), country));
 
-//		final StringBuilder builder = new StringBuilder(""+org.getId())
-//				.append("_All_Contacts");
 		groupService.save(new Group_("All_Contacts", org));
 		
 		final User newUser = userService.save(new User(user.getSurname(), user.getOtherNames(), 
@@ -112,41 +113,42 @@ public class OrganisationServiceImpl implements OrganisationService{
 		return report;
 	}
 
-	private SignUpResponse create(final Client client, final AdminRole user, final String sc_name) {
+	private SignUp saveToApi(final Client client, final AdminRole user) {
 
 		header = new HttpHeaders();
 		header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		
 		parameters = new LinkedMultiValueMap<String, Object>();
 		parameters.add("client", client.getName());
-		parameters.add("country", client.getCountry().toString());
+		parameters.add("country", client.getCountry().getName());
 		parameters.add("admin", user.getEmail());
-		parameters.add("shortCode", sc_name);		
 		parameters.add("phoneNo", user.getPhoneNo());
 				
 		body = new HttpEntity<MultiValueMap<String, Object>>(parameters, header);
 		
-		final ResponseEntity<SignUpResponse> response = restTemplate.exchange(URI + "/client", 
-				HttpMethod.POST, body, SignUpResponse.class);
+		final ResponseEntity<SignUp> response = restTemplate.exchange(URI + "/client", 
+				HttpMethod.POST, body, SignUp.class);
 		return response.getBody();
 	}
 	
 	@Override
 	public Organisation save(final Organisation organisation) {
 		final Organisation org = repository.save(organisation);
+		log.info("##### saved: "+org);
 		return org;
 	}
 	
 	@Override
 	public boolean isEnabled(final String email) {	
-		final ClientResponse client = getClient(email);
+		final Credit client = getClient(email);
 		if(client.getCode() == 400)
 			return false;
 		
 		return client.getClient().isEnabled();
 	}
-
-	private ClientResponse getClient(final String email) {
+	
+	@Override
+	public Credit getClient(final String email) {
 		header = new HttpHeaders();		
 		header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		
@@ -155,10 +157,10 @@ public class OrganisationServiceImpl implements OrganisationService{
 		
 		body = new HttpEntity<MultiValueMap<String, Object>>(parameters, header);
 		
-		final ResponseEntity<ClientResponse> response = restTemplate
-				.exchange(URI + "/admin/signin", 
-				HttpMethod.POST, body, ClientResponse.class);//ClientResponse.class);
-		final ClientResponse client = response.getBody();
+		final ResponseEntity<Credit> response = restTemplate
+				.exchange(URI + "/user", 
+				HttpMethod.POST, body, Credit.class);
+		final Credit client = response.getBody();
 		return client;
 	}	
 	private static final Logger log = LoggerFactory.getLogger(OrganisationServiceImpl.class);

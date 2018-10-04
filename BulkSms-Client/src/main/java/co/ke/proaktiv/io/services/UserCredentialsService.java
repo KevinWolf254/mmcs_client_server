@@ -13,4 +13,6 @@ public interface UserCredentialsService {
 
 	public UserCredentials update(String newPassword);
 
+	public void delete(UserCredentials cred);
+
 }

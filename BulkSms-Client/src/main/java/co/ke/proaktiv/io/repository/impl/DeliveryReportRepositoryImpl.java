@@ -30,13 +30,13 @@ public class DeliveryReportRepositoryImpl implements DeliverReportRepositoryCust
 		final EntityManager manager = factory.createEntityManager();
 		List<DeliveryReport> reports = new ArrayList<DeliveryReport>();
 		try {
-			CriteriaBuilder builder = manager.getCriteriaBuilder();
+			final CriteriaBuilder builder = manager.getCriteriaBuilder();
 			CriteriaQuery<DeliveryReport> query = builder.createQuery(DeliveryReport.class);
 			
-			Root<DeliveryReport> requestRoot = query.from(DeliveryReport.class);			
-			Path<Date> date = requestRoot.get(DeliveryReport_.date);
+			final Root<DeliveryReport> requestRoot = query.from(DeliveryReport.class);			
+			final Path<Date> date = requestRoot.get(DeliveryReport_.date);
 
-			Join<DeliveryReport, Organisation> join = requestRoot.join(DeliveryReport_.organisation);
+			final Join<DeliveryReport, Organisation> join = requestRoot.join(DeliveryReport_.organisation);
 			
 			query = query.select(requestRoot).distinct(true)
 					.where(builder.and(builder.between(date, from, to), 

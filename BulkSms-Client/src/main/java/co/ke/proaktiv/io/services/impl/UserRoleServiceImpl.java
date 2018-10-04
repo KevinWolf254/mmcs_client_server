@@ -2,6 +2,8 @@ package co.ke.proaktiv.io.services.impl;
 
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +20,8 @@ public class UserRoleServiceImpl implements UserRoleService{
 	
 	@Override
 	public UserRole save(UserRole role) {
-		final UserRole userRole = repository.save(role);
+		final UserRole userRole = repository.save(role);		
+		log.info("##### saved: "+userRole);
 		return userRole;
 	}
 
@@ -34,4 +37,9 @@ public class UserRoleServiceImpl implements UserRoleService{
 		return roles;
 	}
 
+	@Override
+	public void delete(UserRole role) {
+		repository.delete(role);
+	}
+	private static final Logger log = LoggerFactory.getLogger(UserRoleService.class);
 }

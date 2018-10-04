@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mmcs_client_db_v3
+    username: mmcs_dbm
+    password: <9r0@q7iV3_1O>    
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        id:
+          new_generator_mappings: false
+  mail:
+    host: smtp.gmail.com
+    port: 465
+    protocol: smtps
+    username: aeon.io.tech@gmail.com
+    password: K@ny1_3l3v3N
+    properties:
+      mail:
+        smtps:
+          auth: true
+          timeout: 8000
+          starttls:
+            enable: true
+        transport:
+          protocol: smtps
+server:
+  port: 8083
+  servlet:
+    context-path: /mmcs

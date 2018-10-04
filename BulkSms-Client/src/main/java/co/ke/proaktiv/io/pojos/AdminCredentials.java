@@ -1,8 +1,8 @@
 package co.ke.proaktiv.io.pojos;
 
-import co.ke.proaktiv.io.pojos.pro.ClientAdmin;
+import co.ke.proaktiv.io.pojos.pro.ClientUser;
 
-public class AdminCredentials extends ClientAdmin{	
+public class AdminCredentials extends ClientUser{	
 	private String surname;
 	private String otherNames;
 	private String password;
