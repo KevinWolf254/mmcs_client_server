@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService{
 		HttpEntity<MultiValueMap<String, Object>> body = new 
 				HttpEntity<MultiValueMap<String, Object>>(parameters, header);
 		
-		return restTemplate.exchange(URI + "/admin/" + user.getOrganisation().getId(), 
+		return restTemplate.exchange(URI + "/user/" + user.getOrganisation().getId(), 
 				HttpMethod.POST, body, AdminResponse.class).getBody();
 	}
 	
@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public Response delete(User user) {
 		final ResponseEntity<Response> response = 
-				restTemplate.exchange(URI + "/admin/" + user.getEmail(), 
+				restTemplate.exchange(URI + "/user/" + user.getEmail(), 
 				HttpMethod.DELETE, null, Response.class);
 		final Response response_ = response.getBody();
 		if(response_.getCode() == 400)
