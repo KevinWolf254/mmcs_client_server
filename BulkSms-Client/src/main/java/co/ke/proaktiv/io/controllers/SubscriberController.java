@@ -2,7 +2,6 @@ package co.ke.proaktiv.io.controllers;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import co.ke.proaktiv.io.models.Group_;
-import co.ke.proaktiv.io.models.Organisation;
 import co.ke.proaktiv.io.models.Subscriber;
+import co.ke.proaktiv.io.models.User;
 import co.ke.proaktiv.io.pojos.ServiceProviderReport;
 import co.ke.proaktiv.io.pojos.Subscriber_;
 import co.ke.proaktiv.io.pojos.reports.GroupIds;
@@ -39,13 +38,13 @@ public class SubscriberController {
 	
 	@GetMapping(value = "/secure/subscriber/{id}")
 	public ResponseEntity<Object> findByGroupId(@PathVariable("id") final Long id){
-		final Set<Subscriber> contacts = subscriberService.findByGroupsId(id);
-		return new ResponseEntity<Object>(contacts, HttpStatus.OK);
+		final Set<Subscriber> subscribers = subscriberService.findByGroupsId(id);
+		return new ResponseEntity<Object>(subscribers, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/secure/subscriber/groups")
 	public ResponseEntity<Object> findByGroupsId(@RequestBody final GroupIds groupIds) {
-		final Set<Subscriber> subs = subscriberService.findByGroupsIds(groupIds.getGroupIds());
+		final Set<Subscriber> subs = subscriberService.findByGroupsId(groupIds.getGroupIds());
 		final Set<ServiceProviderReport> report = subscriberService.createReport(subs);
 		return new ResponseEntity<>(report, HttpStatus.OK);
 	}
@@ -89,13 +88,8 @@ public class SubscriberController {
 	
 	@GetMapping(value = "/secure/subscriber")
 	public ResponseEntity<Object> findAll(){
-		final Organisation org = userService.getSignedInUser().getOrganisation();
-		final Set<Group_> groups = groupService.findByOrganisationId(org.getId());
-		final Set<Long> groupIds = groups.stream()
-				.map(group -> group.getId())
-				.collect(Collectors.toSet());
-		final Set<Subscriber> subs = subscriberService.findByGroupsIds(groupIds);
-		final Set<ServiceProviderReport> report = subscriberService.createReport(subs);
+		final User user = userService.getSignedInUser();
+		final Set<ServiceProviderReport> report = subscriberService.findAllByUser(user);
 		return new ResponseEntity<Object>(report, HttpStatus.OK);
 	}
 	

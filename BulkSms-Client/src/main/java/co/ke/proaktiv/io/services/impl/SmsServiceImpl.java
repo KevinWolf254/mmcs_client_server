@@ -60,7 +60,7 @@ public class SmsServiceImpl implements SmsService{
 
 		final String senderEmail = user.getEmail();
 		
-		final Set<Subscriber> subs = subService.findByGroupsIds(groupIds);
+		final Set<Subscriber> subs = subService.findByGroupsId(groupIds);
 		final String recipients = subService.toString(subs);
 		
 		final Set<ServiceProviderReport> report = subService.createReport(subs);

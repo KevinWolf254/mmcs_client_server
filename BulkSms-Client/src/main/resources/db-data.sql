@@ -74,15 +74,3 @@ INSERT INTO `mmcs_client_db_v3`.`service_provider_prefix` (`service_provider_id`
 INSERT INTO `mmcs_client_db_v3`.`service_provider_prefix` (`service_provider_id`, `prefix_id`) VALUES ('15', '9');
 INSERT INTO `mmcs_client_db_v3`.`service_provider_prefix` (`service_provider_id`, `prefix_id`) VALUES ('16', '13');
 
-
-
-
-
-
-
-
-
-
-
-
-

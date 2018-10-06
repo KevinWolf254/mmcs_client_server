@@ -182,7 +182,7 @@ DROP TABLE IF EXISTS `mmcs_client_db_v3`.`subscriber` ;
 
 CREATE TABLE IF NOT EXISTS `mmcs_client_db_v3`.`subscriber` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `number` VARCHAR(6) NOT NULL,
+  `number` VARCHAR(9) NOT NULL,
   `full_phone_no` VARCHAR(13) NOT NULL,
   `service_provider_id` INT NOT NULL,
   `prefix_id` INT NOT NULL,

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.ke.proaktiv.io.models.Organisation;
 import co.ke.proaktiv.io.models.User;
 import co.ke.proaktiv.io.models.UserCredentials;
 import co.ke.proaktiv.io.models.UserRole;
@@ -45,8 +43,6 @@ public class UserController {
 	private UserCredentialsService credService;
 	@Autowired
 	private UserRoleService roleService;
-	@Autowired
-	private PasswordEncoder encoder;
 	
 	@GetMapping(value = "/secure/user/signin")
 	public ResponseEntity<Object> signIn() {
@@ -69,19 +65,9 @@ public class UserController {
 			@RequestParam("email") String email,
 			@RequestParam("role") Role role, 
 			@RequestParam("password") String password) {
-		final Optional<User> user = userService.findByEmail(email);
-		if(user.isPresent())
-			return new ResponseEntity<Object>(new Response(400, "failed", "user already exists"),
-					HttpStatus.BAD_REQUEST);
-		
-		final User signedIn = userService.getSignedInUser();
-		final Organisation organisation = signedIn.getOrganisation();
-		final User newUser = userService.save(new User(surname, otherNames, email, organisation));
-		userService.saveRemote(newUser, password);
-		final String encodedPass = encoder.encode(password);
-		final UserCredentials credentials = credService.save(new UserCredentials(Boolean.TRUE,
-				encodedPass, newUser)); 
-		roleService.save(new UserRole(role, credentials));
+		final Response response = userService.save(surname, otherNames, email, role, password);
+		if(response.getCode() == 400)
+			return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
 		
 		return new ResponseEntity<>(new Response(200, "success", "successfully created user"), 
 				HttpStatus.OK);
@@ -100,37 +86,37 @@ public class UserController {
 		});
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-	@PreAuthorize("hasRole('ADMIN')")
-	@PutMapping(value = "/secure/user")
-	public ResponseEntity<Object> update(@RequestBody final UserReport request){
-		
-		final User _user = request.getUser();
-		final UserCredentials _cred = request.getCredentials();
-		final Set<UserRole> _roles = request.getRoles();
-		
-		final Optional<User> user = userService.findByEmail(_user.getEmail());
-
-		if(!user.isPresent())
-			return new ResponseEntity<Object>(new UserReport(400, "failed", "could not update",
-					_user, _cred, _roles), HttpStatus.BAD_REQUEST);
-		
-		final User user_ = user.get();
-		user_.setSurname(_user.getSurname());
-		user_.setOtherNames(_user.getOtherNames());
-		final User usrUp = userService.save(user_);
-		
-		final UserCredentials cred = credService.findByUser(usrUp);	
-		cred.setEnabled(_cred.isEnabled());
-		final UserCredentials credUp = credService.save(cred);
-		
-		_roles.stream().forEach(role->{
-			roleService.save(new UserRole(role.getRole(), credUp));
-		});
-		final Set<UserRole> roles = roleService.findByUserCredentials(credUp);
-		
-		return new ResponseEntity<Object>(new UserReport(200, "success", "successfully updated",
-				usrUp, credUp, roles), HttpStatus.OK);
-	}
+//	@PreAuthorize("hasRole('ADMIN')")
+//	@PutMapping(value = "/secure/user")
+//	public ResponseEntity<Object> update(@RequestBody final UserReport request){
+//		
+//		final User _user = request.getUser();
+//		final UserCredentials _cred = request.getCredentials();
+//		final Set<UserRole> _roles = request.getRoles();
+//		
+//		final Optional<User> user = userService.findByEmail(_user.getEmail());
+//
+//		if(!user.isPresent())
+//			return new ResponseEntity<Object>(new UserReport(400, "failed", "could not update",
+//					_user, _cred, _roles), HttpStatus.BAD_REQUEST);
+//		
+//		final User user_ = user.get();
+//		user_.setSurname(_user.getSurname());
+//		user_.setOtherNames(_user.getOtherNames());
+//		final User usrUp = userService.save(user_);
+//		
+//		final UserCredentials cred = credService.findByUser(usrUp);	
+//		cred.setEnabled(_cred.isEnabled());
+//		final UserCredentials credUp = credService.save(cred);
+//		
+//		_roles.stream().forEach(role->{
+//			roleService.save(new UserRole(role.getRole(), credUp));
+//		});
+//		final Set<UserRole> roles = roleService.findByUserCredentials(credUp);
+//		
+//		return new ResponseEntity<Object>(new UserReport(200, "success", "successfully updated",
+//				usrUp, credUp, roles), HttpStatus.OK);
+//	}
 	
 //	@PreAuthorize("hasRole('ADMIN')")
 //	@PutMapping(value = "/secure/user")

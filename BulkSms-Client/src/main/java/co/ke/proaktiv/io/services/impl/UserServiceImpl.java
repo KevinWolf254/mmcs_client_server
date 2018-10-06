@@ -12,15 +12,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import co.ke.proaktiv.io.configurations.AuthenticationFacadeInterface;
+import co.ke.proaktiv.io.models.Organisation;
 import co.ke.proaktiv.io.models.User;
 import co.ke.proaktiv.io.models.UserCredentials;
 import co.ke.proaktiv.io.models.UserRole;
+import co.ke.proaktiv.io.pojos.helpers.Role;
 import co.ke.proaktiv.io.pojos.response.AdminResponse;
 import co.ke.proaktiv.io.pojos.response.Response;
 import co.ke.proaktiv.io.repository.UserRepository;
@@ -40,6 +43,8 @@ public class UserServiceImpl implements UserService{
 	private UserRoleService roleService;
 	@Autowired
 	private UserCredentialsService credService;
+	@Autowired
+	private PasswordEncoder encoder;
 	@Autowired
 	private RestTemplate restTemplate;
 	private HttpHeaders header;
@@ -62,18 +67,40 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public AdminResponse saveRemote(final User user, final String password) {
+	public Response save(String surname, String otherNames, String email, Role role, String password) {
+
+		final Optional<User> _user = findByEmail(email);
+		if(_user.isPresent())
+			return new Response(400, "failed", "user already exists");
+		
+		final User user = getSignedInUser();
+		final Organisation org = user.getOrganisation();
+
+		final Response response = saveToApi(org.getId(), email, password);
+		if(response.getCode() == 400)
+			return response;
+		
+		final User user_ = save(new User(surname, otherNames, email, org));
+		final String encodedPass = encoder.encode(password);
+		final UserCredentials credentials = credService.save(new UserCredentials(Boolean.TRUE,
+				encodedPass, user_)); 
+		roleService.save(new UserRole(role, credentials));
+		
+		return response;
+	}
+	
+	private AdminResponse saveToApi(final Long orgId, final String email, final String password) {
 		header = new HttpHeaders();
 		header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		
 		parameters = new LinkedMultiValueMap<String, Object>();
-		parameters.add("email", user.getEmail());
+		parameters.add("email", email);
 		parameters.add("password", password);
 
 		HttpEntity<MultiValueMap<String, Object>> body = new 
 				HttpEntity<MultiValueMap<String, Object>>(parameters, header);
 		
-		return restTemplate.exchange(URI + "/user/" + user.getOrganisation().getId(), 
+		return restTemplate.exchange(URI + "/user/" + orgId, 
 				HttpMethod.POST, body, AdminResponse.class).getBody();
 	}
 	

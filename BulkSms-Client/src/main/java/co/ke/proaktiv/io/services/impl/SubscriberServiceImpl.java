@@ -25,9 +25,11 @@ import com.opencsv.enums.CSVReaderNullFieldIndicator;
 
 import co.ke.proaktiv.io.models.Country;
 import co.ke.proaktiv.io.models.Group_;
+import co.ke.proaktiv.io.models.Organisation;
 import co.ke.proaktiv.io.models.Prefix;
 import co.ke.proaktiv.io.models.ServiceProvider;
 import co.ke.proaktiv.io.models.Subscriber;
+import co.ke.proaktiv.io.models.User;
 import co.ke.proaktiv.io.pojos.ServiceProviderReport;
 import co.ke.proaktiv.io.pojos.Subscriber_;
 import co.ke.proaktiv.io.pojos.response.Response;
@@ -37,6 +39,7 @@ import co.ke.proaktiv.io.services.GroupService;
 import co.ke.proaktiv.io.services.PrefixService;
 import co.ke.proaktiv.io.services.ServiceProviderService;
 import co.ke.proaktiv.io.services.SubscriberService;
+import co.ke.proaktiv.io.services.UserService;
 
 @Service
 public class SubscriberServiceImpl implements SubscriberService {
@@ -45,6 +48,8 @@ public class SubscriberServiceImpl implements SubscriberService {
 	private SubscriberRepository repository;
 	@Autowired
 	private ServiceProviderService providerService;
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private PrefixService prefixService;
 	@Autowired
@@ -59,7 +64,7 @@ public class SubscriberServiceImpl implements SubscriberService {
 	}
 	
 	@Override
-	public Set<Subscriber> findByGroupsIds(final Set<Long> groupIds) {
+	public Set<Subscriber> findByGroupsId(final Set<Long> groupIds) {
 		final Set<Subscriber> subscribers = groupIds.stream()
 				.map(id-> findByGroupsId(id))
 				.flatMap(group_subscribers -> group_subscribers.stream())
@@ -85,10 +90,11 @@ public class SubscriberServiceImpl implements SubscriberService {
 			.forEach(provider->{				
 				final int total = subscribers.stream()
 					.filter(subscriber -> subscriber.getServiceProvider().equals(provider))
-					.collect(Collectors.toSet()).size();
+					.collect(Collectors.toSet())
+					.size();
 				list.add(new ServiceProviderReport(provider, total));
 			}
-		);		
+		);	
 		return list;
 	}
 
@@ -123,11 +129,11 @@ public class SubscriberServiceImpl implements SubscriberService {
 			return save(sub.get(), group);
 		}
 		final Country country = countryService.findByCode(code);
-		final Prefix prefix = prefixService.findByNumber(provider);
+		final String ndc = provider.substring(0, 2);
+		final Prefix prefix = prefixService.findByNumber(ndc);
 		final ServiceProvider serviceProvider = providerService.find(country, prefix);
-		
-		final Subscriber subscriber_ = repository.save(new Subscriber(serviceProvider, prefix, number, group));
-		log.info("##### saved: "+subscriber_);
+		final Subscriber subscriber_ = repository.save(new Subscriber(code, subscriber.getNumber(), prefix, serviceProvider, group));
+		log.info("##### saved: "+subscriber);
 		return subscriber_;	
 	}
 
@@ -205,14 +211,14 @@ public class SubscriberServiceImpl implements SubscriberService {
 					return subscriber;})
 				.map(sub ->{	
 					final String code = sub.getCode();
-					final String provider = sub.getNumber().substring(0, 3);
-					final String number = sub.getNumber().substring(3);
+					final String _prefix = sub.getNumber().substring(0, 2);
+					final String number = sub.getNumber();
 
 					final Country country = countryService.findByCode(code);
-					final Prefix prefix = prefixService.findByNumber(provider);
+					final Prefix prefix = prefixService.findByNumber(_prefix);
 					final ServiceProvider serviceProvider = providerService.find(country, prefix);
 					
-					return new Subscriber(serviceProvider, prefix, number, group);
+					return new Subscriber(code, number, prefix, serviceProvider, group);
 				})
 				.collect(Collectors.toSet())
 				.forEach(subscriber ->{
@@ -274,5 +280,19 @@ public class SubscriberServiceImpl implements SubscriberService {
 				recipients.append(sub);
 			});
 		return recipients.toString();
+	}
+
+	@Override
+	public Set<ServiceProviderReport> findAllByUser(User user) {
+		final Organisation org = userService.getSignedInUser().getOrganisation();
+		
+		final Set<Group_> groups = groupService.findByOrganisationId(org.getId());
+		final Set<Long> groupIds = groups.stream()
+				.map(group -> group.getId())
+				.collect(Collectors.toSet());
+		
+		final Set<Subscriber> subs = findByGroupsId(groupIds);
+		final Set<ServiceProviderReport> report = createReport(subs);
+		return report;
 	}
 }

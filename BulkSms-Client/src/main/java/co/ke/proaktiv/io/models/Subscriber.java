@@ -18,8 +18,10 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Entity
 @Table(name="subscriber")
@@ -30,7 +32,7 @@ public class Subscriber {
 	@Column(name="id")
 	private Long id;
 	
-	@Column(name="number", length = 6, nullable = false)
+	@Column(name="number", length = 9, nullable = false)
 	private String number;
 	
 	@Column(name="full_phone_no", length = 13, nullable = false, unique=true)
@@ -58,12 +60,12 @@ public class Subscriber {
 	public Subscriber() {
 		super();
 	}
-	public Subscriber(ServiceProvider sp, Prefix prefix, String number, Group_ group) {
+	public Subscriber(String code, String number, Prefix prefix, ServiceProvider sp, Group_ group) {
 		super();
 		this.serviceProvider = sp;
 		this.prefix = prefix;
 		this.number = number;
-		this.fullPhoneNo = combine(sp.getCountry().getCode(), prefix.getNumber(), number);
+		this.fullPhoneNo = combine(code, number);
 		this.groups.add(group);
 	}
 	public Long getId() {
@@ -103,9 +105,8 @@ public class Subscriber {
 	public void setGroups(Set<Group_> groups) {
 		this.groups = groups;
 	}
-	private String combine(String code, String prefix, String number) {
-		final StringBuilder builder = new StringBuilder(code)
-				.append(prefix).append(number);
+	private String combine(String code, String number) {
+		final StringBuilder builder = new StringBuilder(code).append(number);
 		return builder.toString();
 	}
 	@Override
@@ -130,5 +131,14 @@ public class Subscriber {
 		} else if (!fullPhoneNo.equals(other.fullPhoneNo))
 			return false;
 		return true;
-	}	
+	}
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("Subscriber [id=").append(id)
+				.append(", number=").append(number)
+				.append(", fullPhoneNo=").append(fullPhoneNo)
+				.append("]");
+		return builder.toString();
+	}
 }

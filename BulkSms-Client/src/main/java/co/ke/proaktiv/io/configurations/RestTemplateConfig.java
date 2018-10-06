@@ -20,7 +20,7 @@ public class RestTemplateConfig extends DefaultResponseErrorHandler {
 
 	@Override
 	public void handleError(ClientHttpResponse response) throws IOException {
-		log.error("RestTemplate Error: "+response);
+		log.info("RestTemplate Error: "+response);
 		super.handleError(response);
 	}
 	private static final Logger log = LoggerFactory.getLogger(RestTemplateConfig.class);

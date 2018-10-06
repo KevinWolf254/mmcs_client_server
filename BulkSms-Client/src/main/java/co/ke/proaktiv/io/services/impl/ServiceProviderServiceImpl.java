@@ -1,6 +1,7 @@
 package co.ke.proaktiv.io.services.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,11 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	@Override
 	public ServiceProvider find(Country country, Prefix prefix) {
 		return repository.find(country, prefix);
+	}
+
+	@Override
+	public Optional<ServiceProvider> findById(Long id) {
+		return repository.findById(id);
 	}
 
 }
