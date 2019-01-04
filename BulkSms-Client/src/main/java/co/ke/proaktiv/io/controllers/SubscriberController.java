@@ -38,14 +38,13 @@ public class SubscriberController {
 	
 	@GetMapping(value = "/secure/subscriber/{id}")
 	public ResponseEntity<Object> findByGroupId(@PathVariable("id") final Long id){
-		final Set<Subscriber> subscribers = subscriberService.findByGroupsId(id);
+		final Set<Subscriber> subscribers = subscriberService.findByGroupId(id);
 		return new ResponseEntity<Object>(subscribers, HttpStatus.OK);
 	}
-	
 	@PostMapping(value = "/secure/subscriber/groups")
 	public ResponseEntity<Object> findByGroupsId(@RequestBody final GroupIds groupIds) {
 		final Set<Subscriber> subs = subscriberService.findByGroupsId(groupIds.getGroupIds());
-		final Set<ServiceProviderReport> report = subscriberService.createReport(subs);
+		final Set<ServiceProviderReport> report = subscriberService.calculateTotalSubsPerProvider(subs);
 		return new ResponseEntity<>(report, HttpStatus.OK);
 	}
 	
@@ -58,10 +57,14 @@ public class SubscriberController {
 		return new ResponseEntity<Object>(response, HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "/secure/subscriber/file")
+	@PostMapping(value = "/secure/subscribers")
 	public ResponseEntity<Object> save(@RequestPart("file") final MultipartFile csvfile){
 		final Set<Subscriber> subs = subscriberService.save(csvfile);
-		return new ResponseEntity<Object>(subs, HttpStatus.OK);
+		if(subs.size() == 0)
+			return new ResponseEntity<Object>(new Response(400, "failed", "Could not add subscribers"), 
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<Object>(new Response(200, "success", "Successfully added subscribers"), 
+				HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/secure/subscriber/{groupId}")
@@ -70,20 +73,21 @@ public class SubscriberController {
 
 		final Optional<Group_> group = groupService.findById(id);
 		if(!subscriberService.isValid(sub) || !group.isPresent())
-			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Object>(new Response(400, "failed", "bad request"), 
+					HttpStatus.BAD_REQUEST);
 		final Subscriber response = subscriberService.save(sub, group.get());
 		return new ResponseEntity<Object>(response, HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "/secure/subscriber/file/{groupId}")
+	@PostMapping(value = "/secure/subscribers/{groupId}")
 	public ResponseEntity<Object> save(@RequestPart("file") final MultipartFile csvfile, 
 			@PathVariable("groupId") final Long id){
 		
 		final Optional<Group_> group = groupService.findById(id);
 		if(!group.isPresent())
-			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-		final Set<Subscriber>  response = subscriberService.save(csvfile, group.get());
-		return new ResponseEntity<Object>(response, HttpStatus.OK);
+			return new ResponseEntity<Object>(new Response(400, "failed", "Group does not exist!"),HttpStatus.BAD_REQUEST);
+		subscriberService.save(csvfile, group.get());
+		return new ResponseEntity<Object>(new Response(200, "success", "Subscribers added to Group"), HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "/secure/subscriber")

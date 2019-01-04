@@ -10,6 +10,9 @@ public class Credit extends Response {
 	public Credit() {
 		super();
 	}
+	public Credit(int code, String title, String message) {
+		super(code, title, message);
+	}
 	public Credit(int code, String title, String message, 
 			Client client, Disbursement disbursement) {
 		super(code, title, message);

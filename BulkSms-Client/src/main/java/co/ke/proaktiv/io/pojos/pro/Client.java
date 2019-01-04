@@ -6,7 +6,8 @@ import co.ke.proaktiv.io.models.Country;
 
 public class Client {
 	
-	private Long id;	
+	private Long id;
+	private String customerId;
 	private String name;	
 	private double creditAmount;
     private boolean enabled;
@@ -27,6 +28,12 @@ public class Client {
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+	public String getCustomerId() {
+		return customerId;
+	}
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
 	}
 	public Country getCountry() {
 		return country;
@@ -58,10 +65,4 @@ public class Client {
 	public void setCreatedOn(Date createdOn) {
 		this.createdOn = createdOn;
 	}
-	@Override
-	public String toString() {
-		return "Client [id=" + id + ", name=" + name + ", creditAmount=" + creditAmount + ", enabled=" + enabled
-				+ ", createdOn=" + createdOn + ", country=" + country + "]";
-	}
-	
 }

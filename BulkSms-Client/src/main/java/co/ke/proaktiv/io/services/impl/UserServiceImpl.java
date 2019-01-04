@@ -1,12 +1,12 @@
 package co.ke.proaktiv.io.services.impl;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,14 +19,18 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import co.ke.proaktiv.io.configurations.AuthenticationFacadeInterface;
+import co.ke.proaktiv.io.configurations.RemoteServersProperties;
 import co.ke.proaktiv.io.models.Organisation;
 import co.ke.proaktiv.io.models.User;
 import co.ke.proaktiv.io.models.UserCredentials;
 import co.ke.proaktiv.io.models.UserRole;
 import co.ke.proaktiv.io.pojos.helpers.Role;
+import co.ke.proaktiv.io.pojos.reports.SignInReport;
 import co.ke.proaktiv.io.pojos.response.AdminResponse;
+import co.ke.proaktiv.io.pojos.response.Credit;
 import co.ke.proaktiv.io.pojos.response.Response;
 import co.ke.proaktiv.io.repository.UserRepository;
+import co.ke.proaktiv.io.services.OrganisationService;
 import co.ke.proaktiv.io.services.UserCredentialsService;
 import co.ke.proaktiv.io.services.UserRoleService;
 import co.ke.proaktiv.io.services.UserService;
@@ -36,7 +40,9 @@ public class UserServiceImpl implements UserService{
 
 	@Autowired
 	private UserRepository repository;
-	
+
+	@Autowired
+	private OrganisationService orgService;
 	@Autowired
 	private AuthenticationFacadeInterface authentication;
 	@Autowired
@@ -46,13 +52,26 @@ public class UserServiceImpl implements UserService{
 	@Autowired
 	private PasswordEncoder encoder;
 	@Autowired
+    private RemoteServersProperties properties;
+	@Autowired
 	private RestTemplate restTemplate;
 	private HttpHeaders header;
 	private MultiValueMap<String, Object> parameters;
 	
-	@Value("${mmcs.aeon.url}")
-	private String URI;
-	
+	private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+
+	@Override
+	public SignInReport signIn() {
+		final User user = getSignedInUser();
+		final Credit report = orgService.getClient(user.getEmail());
+		final UserCredentials cred = credService.findByUser(user);		
+		cred.setSignIn(new Date());
+		credService.save(cred);
+		final Set<UserRole> roles = roleService.findByUserCredentials(cred);
+		final SignInReport response = new SignInReport(200, "success", "successfully signed in", 
+				report.getClient(),report.getDisbursement(), user, cred, roles);
+		return response;
+	}
 	@Override
 	public Optional<User> findByEmail(final String email) {
 		final Optional<User> user = repository.findByEmail(email);
@@ -61,8 +80,13 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	public User save(final User user) {
-		final User user_ = repository.save(user);	
-		log.info("##### saved: "+user_);
+		User user_ = null;
+		try {
+			user_ = repository.save(user);
+		} catch (Exception e) {
+			log.info("Exception: "+e.getMessage());
+			return user_;
+		}	
 		return user_;
 	}
 
@@ -100,7 +124,7 @@ public class UserServiceImpl implements UserService{
 		HttpEntity<MultiValueMap<String, Object>> body = new 
 				HttpEntity<MultiValueMap<String, Object>>(parameters, header);
 		
-		return restTemplate.exchange(URI + "/user/" + orgId, 
+		return restTemplate.exchange(properties.getApiServer() + "/user/" + orgId, 
 				HttpMethod.POST, body, AdminResponse.class).getBody();
 	}
 	
@@ -131,7 +155,7 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public Response delete(User user) {
 		final ResponseEntity<Response> response = 
-				restTemplate.exchange(URI + "/user/" + user.getEmail(), 
+				restTemplate.exchange(properties.getApiServer() + "/user/" + user.getEmail(), 
 				HttpMethod.DELETE, null, Response.class);
 		final Response response_ = response.getBody();
 		if(response_.getCode() == 400)
@@ -144,6 +168,5 @@ public class UserServiceImpl implements UserService{
 		credService.delete(cred);
 		repository.delete(user);
 		return response_;
-	}	
-	private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+	}
 }

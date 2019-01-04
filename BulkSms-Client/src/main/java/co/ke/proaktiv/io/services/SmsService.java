@@ -19,7 +19,7 @@ public interface SmsService {
 	 * @param message
 	 * @return SmsDeliveryResponse
 	 */
-	public SmsDeliveryResponse send(final User user, final String message);
+	public SmsDeliveryResponse send(User user, String senderId, String message);
 	
 	/**
 	 * sends SMS to a selected number of groups
@@ -28,5 +28,5 @@ public interface SmsService {
 	 * @param groupIds
 	 * @return SmsDeliveryResponse
 	 */
-	public SmsDeliveryResponse send(final User user, final String message, final Set<Long> groupIds);
+	public SmsDeliveryResponse send(User user, String senderId, String message, Set<Long> groupIds);
 }

@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import co.ke.proaktiv.io.models.Group_;
+import co.ke.proaktiv.io.models.Schedule;
 import co.ke.proaktiv.io.pojos.response.Response;
 
 public interface GroupService {
@@ -17,4 +18,6 @@ public interface GroupService {
 	public Response delete(Long id);
 
 	public Optional<Group_> findById(Long id);
+
+	public Set<Group_> findBySchedule(Schedule schedule);
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.ke.proaktiv.io.models.Group_;
+import co.ke.proaktiv.io.models.Organisation;
 import co.ke.proaktiv.io.pojos.response.GroupResponse;
 import co.ke.proaktiv.io.pojos.response.Response;
 import co.ke.proaktiv.io.services.GroupService;
@@ -32,26 +33,25 @@ public class GroupController {
 		final Set<Group_> groups = groupService.findByOrganisationId(id);
 		return new ResponseEntity<Object>(groups, HttpStatus.OK);
 	}
-	
 	@PostMapping(value = "/secure/group")
-	public ResponseEntity<Object> save(@RequestParam("name") String name) {
+	public ResponseEntity<Object> save(@RequestParam("name") final String name) {
 		final Optional<Group_> group = groupService.findByName(name);
 		if(group.isPresent())
 			return new ResponseEntity<Object>(new Response(400, "failed", "kindly try another name"), 
 					HttpStatus.BAD_REQUEST);
-		groupService.save(group.get());
+		final Organisation organisation = userService.getSignedInUser().getOrganisation();
+		final Group_ group_ = groupService.save(new Group_(name, organisation));
 		return new ResponseEntity<>(new GroupResponse(200, "success", "created group successfully", 
-				group.get()), HttpStatus.OK);
+				group_), HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "/secure/group/{name}")
-	public ResponseEntity<Object> findByName(@PathVariable("name") String name) {
-		final Optional<Group_> group = groupService.findByName(name);		
+	public ResponseEntity<Object> getGroup(@PathVariable("name") final String name) {
+		Group_ group_ = null;
+		final Optional<Group_> group = groupService.findByName(name);
 		if(group.isPresent())
-			return new ResponseEntity<Object>(new Response(400, "failed", "kindly try another name"), 
-					HttpStatus.BAD_REQUEST);
-		return new ResponseEntity<>(new Response(200, "success", "name is available"), 
-				HttpStatus.OK);
+			group_ = group.get();
+		return new ResponseEntity<Object>(group_, HttpStatus.OK);
 	}
 	
 	@DeleteMapping(value = "/secure/group/{id}")

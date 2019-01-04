@@ -14,7 +14,6 @@ public class PrefixServiceImpl implements PrefixService {
 	private PrefixRepository repository;
 	@Override
 	public Prefix findByNumber(String provider) {
-		// TODO Auto-generated method stub
 		return repository.findByNumber(provider);
 	}
 

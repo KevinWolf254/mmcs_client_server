@@ -19,7 +19,7 @@ public interface SubscriberService {
 	
 	public Set<Subscriber> findByGroupsId(Set<Long> groupIds);
 	
-	public Set<Subscriber> findByGroupsId(Long id);
+	public Set<Subscriber> findByGroupId(Long id);
 	
 	public Set<Subscriber> findAll(Long id);
 	
@@ -37,7 +37,7 @@ public interface SubscriberService {
 	
 	public boolean isValid(Subscriber_ subscriber);
 	
-	public Set<ServiceProviderReport> createReport(Collection<Subscriber> subscribers);
+	public Set<ServiceProviderReport> calculateTotalSubsPerProvider(Collection<Subscriber> subscribers);
 	
 	public Response delete(Long contactId, Long groupId);
 }

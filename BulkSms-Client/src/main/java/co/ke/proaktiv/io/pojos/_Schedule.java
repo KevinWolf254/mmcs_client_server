@@ -7,6 +7,7 @@ import co.ke.proaktiv.io.pojos.helpers.ScheduleType;
 
 public class _Schedule {	
 	private String name;	
+	private String senderId;
 	private String createdBy;
 	private ScheduleType type;
 	private Date date;
@@ -21,6 +22,12 @@ public class _Schedule {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getSenderId() {
+		return senderId;
+	}
+	public void setSenderId(String senderId) {
+		this.senderId = senderId;
 	}
 	public ScheduleType getType() {
 		return type;
@@ -51,12 +58,7 @@ public class _Schedule {
 	}
 	public void setCronExpression(String cronExpression) {
 		this.cronExpression = cronExpression;
-	}
-//	@Override
-//	public String toString() {
-//		return "_Schedule [name=" + name + ", type=" + type + ", date=" + date + ", dayOfWeek="
-//				+ dayOfWeek + ", dayOfMonth=" + dayOfMonth + ", cronExpression=" + cronExpression + "]";
-//	}	
+	}	
 	public String getCreatedBy() {
 		return createdBy;
 	}

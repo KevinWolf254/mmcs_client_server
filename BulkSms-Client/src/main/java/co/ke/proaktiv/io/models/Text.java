@@ -33,46 +33,32 @@ public class Text {
 	public Text() {
 		super();
 	}
-
 	public Text(String message) {
 		super();
 		this.message = message;
 	}
-
 	public Text(String message, Schedule schedule) {
 		super();
 		this.message = message;
 		this.schedule = schedule;
-	}
-	
+	}	
 	@JsonIgnore
 	public Long getId() {
 		return id;
 	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}
-
 	public String getMessage() {
 		return message;
 	}
-
 	public void setMessage(String message) {
 		this.message = message;
 	}
-
 	public Schedule getSchedule() {
 		return schedule;
 	}
-
 	public void setSchedule(Schedule schedule) {
 		this.schedule = schedule;
-	}
-
-	@Override
-	public String toString() {
-		return "Text [id=" + id + ", message=" + message + "]";
-	}
-	
+	}	
 }

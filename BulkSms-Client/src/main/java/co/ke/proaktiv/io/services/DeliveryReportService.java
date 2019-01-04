@@ -13,5 +13,5 @@ public interface DeliveryReportService {
 	
 	public DeliveryReport findByMessageId(String messageId);
 
-	public List<DeliveryReport> search(Date from, Date to, Long id);
+	public List<DeliveryReport> findBtwnDates(Date from, Date to, Long id);
 }

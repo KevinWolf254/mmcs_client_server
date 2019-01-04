@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoice_v1" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1c860657-d504-47d8-82f5-4dbf058656c2">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="597" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="0" width="550" height="42" backcolor="#F2F2F2" uuid="a21fea2f-89c3-4c15-acaf-07e39f4e677f"/>
+				<box padding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Source Han Serif CN Heavy" size="32" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INVOICE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="129" width="60" height="12" uuid="b47e566a-2a4f-4c21-918a-2a7c35b69c29"/>
+				<textElement textAlignment="Right">
+					<font fontName="Comfortaa" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Invoice No:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="141" width="60" height="12" uuid="35ad55e0-a73b-4ed5-b858-486e85feee5c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Comfortaa" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="439" y="60" width="100" height="32" forecolor="#32E714" backcolor="#FFFFFF" uuid="2d956597-3a4a-4912-a114-945f9431f5fc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="26" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PAID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="411" y="75" width="45" height="12" uuid="dbc33f57-1ce6-4040-aa98-19ab39a1c73f"/>
+				<textElement>
+					<font fontName="Comfortaa" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="25" y="171" width="162" height="13" uuid="c6ceca6c-4758-4f8b-be67-ddb64c558a56"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[Proaktiv-io Technologies Ltd,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="25" y="198" width="162" height="14" uuid="cfc87adc-12e9-42f9-a8a8-43b3c23a19e0"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[P.o Box 1593-00100 GPO,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="25" y="184" width="162" height="14" uuid="1f057673-ec34-4161-bc1b-ccfaaf900e44"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[Senteu Plaza, Galana Road,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="25" y="212" width="162" height="12" uuid="61df5831-9347-40c0-b93a-494c29c0186a"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[Nairobi, Kenya.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="25" y="231" width="162" height="16" uuid="030f10d1-2e85-4974-8994-10aa82b6e947"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[contact: info@proaktivio.com]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="23" y="280" width="68" height="12" uuid="9d563439-bdf7-4b69-b726-a27bd342c74a"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[Customer ID:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="23" y="292" width="68" height="12" uuid="4cd3f773-4d39-47c5-9958-37482f72caf8"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[     Company:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="23" y="304" width="68" height="12" uuid="c31a0443-eeba-4074-9eaa-9df11e12fc24"/>
+				<textElement textAlignment="Right">
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[User:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="23" y="316" width="68" height="12" uuid="226a37ff-78d1-4778-9776-3233130bde78"/>
+				<textElement textAlignment="Right">
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[Email:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="23" y="328" width="68" height="12" uuid="06f24bfa-9fe6-41ec-a525-21dd60d53466"/>
+				<textElement textAlignment="Right">
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[Tel:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="45" y="380" width="138" height="19" backcolor="#F0F0F0" uuid="edf281fd-a582-4446-a67b-88abd761e38a"/>
+				<box padding="1">
+					<pen lineColor="#E3E3E3"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="419" y="380" width="115" height="19" backcolor="#F0F0F0" uuid="96c513c4-3cd2-4df6-85fa-6921b5e3d6f1"/>
+				<box padding="1">
+					<pen lineColor="#E3E3E3"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="45" y="399" width="138" height="41" backcolor="#F7F7F7" uuid="f47e7d97-2631-4fb2-a599-dd93efbeea46"/>
+				<box padding="1">
+					<pen lineColor="#E3E3E3"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Units purchase]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="419" y="399" width="115" height="41" backcolor="#F7F7F7" uuid="12a9a678-8e71-4102-b53c-82d5b1fb2178"/>
+				<box padding="1">
+					<pen lineColor="#E3E3E3"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="45" y="440" width="374" height="30" backcolor="#F0F0F0" uuid="6c49723c-8755-40ec-a92c-efbd8cced9c5"/>
+				<box padding="1">
+					<pen lineColor="#E3E3E3"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total:   ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="419" y="440" width="115" height="30" backcolor="#F0F0F0" uuid="2d432943-5419-4503-9bbe-836bd57bba93"/>
+				<box padding="1">
+					<pen lineColor="#E3E3E3"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="183" y="380" width="130" height="19" backcolor="#F0F0F0" uuid="3c99b0a6-7baa-44f6-ac78-b971c9f42dd8"/>
+				<box padding="1">
+					<pen lineColor="#E3E3E3"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Transaction id]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="183" y="399" width="130" height="41" backcolor="#F7F7F7" uuid="d606b6f4-85e7-4036-a083-05cd92ce9451"/>
+				<box padding="1">
+					<pen lineColor="#E3E3E3"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="313" y="380" width="106" height="19" backcolor="#F0F0F0" uuid="68d4a1df-2395-4e3c-8d9c-2d340deddf69"/>
+				<box padding="1">
+					<pen lineColor="#E3E3E3"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Payment by]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="313" y="399" width="106" height="41" backcolor="#F7F7F7" uuid="620fc861-27d2-45c0-aaf3-36901821a974"/>
+				<box padding="1">
+					<pen lineColor="#E3E3E3"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[MPESA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="15" y="399" width="30" height="41" backcolor="#F7F7F7" uuid="4cd82e04-1421-417d-b7a6-81c47a02d4e2"/>
+				<box padding="1">
+					<pen lineColor="#E3E3E3"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[1.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="15" y="380" width="30" height="19" backcolor="#F0F0F0" uuid="e08b9d4e-a9ca-46b5-afe1-27191b3ad358"/>
+				<box padding="1">
+					<pen lineColor="#E3E3E3"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#E3E3E3"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[#]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="183" y="503" width="104" height="17" uuid="1ec3994e-7e20-48bd-a925-8f7266446a12"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Pdf generated on:]]></text>
+			</staticText>
+			<image>
+				<reportElement x="25" y="120" width="264" height="44" uuid="95466984-9522-4956-8a48-c90a34c2e455"/>
+				<imageExpression><![CDATA["src/main/resources/images/proaktiv_io_logo.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageFooter>
+		<band height="124" splitType="Stretch">
+			<staticText>
+				<reportElement x="14" y="10" width="160" height="16" uuid="b8f5204c-1b38-4f00-ba8f-919a7e31cb2e"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[website: www.proaktivio.com]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="182" y="10" width="100" height="16" uuid="0a0dd5ab-6d0d-429b-b75a-42dc7fb356bb"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[paybill no: 518654]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="14" y="26" width="160" height="16" uuid="10257e53-27c0-48b2-b339-217ef024f460"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[contact: +254 724166274]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="319" y="10" width="148" height="16" uuid="7b7cedb8-53f4-4bff-8069-67c9706ac5a7"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[For all your ICT needs:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="42" width="198" height="16" uuid="dd3bb6c4-2478-45de-b94f-b5b053c116a9"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[- Website design and development]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="58" width="198" height="16" uuid="34ff5fbb-f7cc-4540-af41-882b979512b6"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[- Mobile and Web app development]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="74" width="198" height="16" uuid="e694d65a-1e07-485d-bcaf-de83ab3056b3"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[- System Integration]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="90" width="198" height="16" uuid="55e91ac0-c998-41bf-b992-e5c64ebd304e"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[- ERP Consultation]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="26" width="198" height="16" uuid="12bb380c-1171-40ad-b9cd-36571b64f810"/>
+				<textElement>
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[- Software development]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="331" y="106" width="198" height="16" uuid="3afac624-c155-4eba-bd9a-e465c34ac5bf"/>
+				<textElement textAlignment="Right">
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<text><![CDATA[and much more..]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>

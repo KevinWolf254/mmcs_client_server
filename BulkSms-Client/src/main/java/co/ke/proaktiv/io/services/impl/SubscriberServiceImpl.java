@@ -59,18 +59,16 @@ public class SubscriberServiceImpl implements SubscriberService {
 	private static final Logger log = LoggerFactory.getLogger(SubscriberServiceImpl.class);
 
 	@Override
-	public Set<Subscriber> findByGroupsId(final Long id) {
+	public Set<Subscriber> findByGroupId(final Long id) {
 		return repository.findByGroupsId(id);
 	}
 	
 	@Override
 	public Set<Subscriber> findByGroupsId(final Set<Long> groupIds) {
-		final Set<Subscriber> subscribers = groupIds.stream()
-				.map(id-> findByGroupsId(id))
+		return groupIds.stream()
+				.map(id-> findByGroupId(id))
 				.flatMap(group_subscribers -> group_subscribers.stream())
 				.collect(Collectors.toSet());	
-		
-		return subscribers;
 	}
 
 	@Override
@@ -78,21 +76,23 @@ public class SubscriberServiceImpl implements SubscriberService {
 		final StringBuilder build = new StringBuilder(""+id)
 				.append("_All_Contacts");
 		final Group_ group = groupService.findByName(build.toString()).get();
-		return findByGroupsId(group.getId());
+		return findByGroupId(group.getId());
 	}
 	
 	@Override
-	public Set<ServiceProviderReport> createReport(final Collection<Subscriber> subscribers) {	
+	public Set<ServiceProviderReport> calculateTotalSubsPerProvider(final Collection<Subscriber> subscribers) {	
 		final Set<ServiceProviderReport> list = new HashSet<ServiceProviderReport>();
 		final List<ServiceProvider> providers = providerService.findAll();
 		
 		providers.stream()
-			.forEach(provider->{				
-				final int total = subscribers.stream()
-					.filter(subscriber -> subscriber.getServiceProvider().equals(provider))
-					.collect(Collectors.toSet())
-					.size();
-				list.add(new ServiceProviderReport(provider, total));
+			.forEach(provider->{
+				if(subscribers.size() != 0) {
+					final Set<Subscriber> subs = subscribers.stream()
+							.filter(subscriber -> subscriber.getServiceProvider().equals(provider))
+							.collect(Collectors.toSet());
+						if(subs.size() != 0)
+							list.add(new ServiceProviderReport(provider, subs.size()));
+				}
 			}
 		);	
 		return list;
@@ -105,7 +105,7 @@ public class SubscriberServiceImpl implements SubscriberService {
 		
 	@Override
 	public Subscriber save(final Subscriber_ subscriber) {
-		final String name = new String("All_Contacts");
+		final String name = new String("All_Subscribers");
 		final Optional<Group_> optGroup = groupService.findByName(name);
 		if(optGroup.isPresent()) {
 			final Group_ group = optGroup.get();
@@ -115,51 +115,55 @@ public class SubscriberServiceImpl implements SubscriberService {
 	}
 	
 	@Override
-	public Subscriber save(final Subscriber_ subscriber, final Group_ group) {		
+	public Subscriber save(final Subscriber_ subscriber, final Group_ group) {			
 		final String code = subscriber.getCode();
 		final String provider = subscriber.getNumber().substring(0, 3);
 		final String number = subscriber.getNumber().substring(3);
+				
+		final String fullPhoneNo = new StringBuilder(code)
+				.append(provider)
+				.append(number)
+				.toString();
 		
-		final String PhoneNo = new StringBuilder("+")
-				.append(code).append(provider).append(number).toString();
+		final Optional<Subscriber> sub = findByFullPhoneNo(fullPhoneNo);
 		
-		final Optional<Subscriber> sub = findByFullPhoneNo(PhoneNo);
+		if(sub.isPresent()) 
+			return addExisting(sub.get(), group);
 		
-		if(sub.isPresent()) {
-			return save(sub.get(), group);
-		}
+		return addNew(subscriber, group, code, provider);	
+	}
+
+	private Subscriber addNew(final Subscriber_ subscriber, final Group_ group, final String code,
+			final String provider) {
 		final Country country = countryService.findByCode(code);
 		final String ndc = provider.substring(0, 2);
 		final Prefix prefix = prefixService.findByNumber(ndc);
 		final ServiceProvider serviceProvider = providerService.find(country, prefix);
 		final Subscriber subscriber_ = repository.save(new Subscriber(code, subscriber.getNumber(), prefix, serviceProvider, group));
-		log.info("##### saved: "+subscriber);
-		return subscriber_;	
+		return subscriber_;
 	}
-
+	
+	private Subscriber addExisting(final Subscriber subscriber, final Group_ group) {
+		subscriber.getGroups().add(group);
+		final Subscriber subscriber_ = repository.save(subscriber);
+		return subscriber_;
+	}
+	
 	private Subscriber save(final Subscriber subscriber) {
 		
 		final Group_ group = subscriber.getGroups().stream().collect(Collectors.toList()).get(0);
 		final Optional<Subscriber> sub = findByFullPhoneNo(subscriber.getFullPhoneNo());
 		
-		if(sub.isPresent()) {
-			return save(sub.get(), group);
-		}
+		if(sub.isPresent()) 
+			return addExisting(sub.get(), group);
+		
 		final Subscriber subscriber_ = repository.save(subscriber);
-		log.info("##### saved: "+subscriber_);
 		return subscriber_;	
-	}
-	
-	private Subscriber save(final Subscriber subscriber, final Group_ group) {
-		group.getSubscribers().add(subscriber);
-		log.info("##### saved: "+subscriber);
-		groupService.save(group);
-		return subscriber;
 	}
 	
 	@Override
 	public Set<Subscriber> save(final MultipartFile csvfile){
-		final String name = new String("All_Contacts");
+		final String name = new String("All_Subscribers");
 		final Optional<Group_> optGroup = groupService.findByName(name);
 		Set<Subscriber> result = new HashSet<Subscriber>();
 		if(optGroup.isPresent()) {
@@ -226,9 +230,14 @@ public class SubscriberServiceImpl implements SubscriberService {
 					subscribers.add(sub);});
 			
 		} catch (FileNotFoundException e) {
-			log.error("#### FileNotFoundException: "+e.getMessage());
+			log.error("FileNotFoundException: "+e.getMessage());
+			return subscribers;
 		} catch (IOException e) {
-			log.error("#### IOException: "+e.getMessage());
+			log.error("IOException: "+e.getMessage());
+			return subscribers;
+		}catch (Exception e) {
+			log.error("Exception: "+e.getMessage());
+			return subscribers;
 		}
 		return subscribers;
 	}
@@ -292,7 +301,7 @@ public class SubscriberServiceImpl implements SubscriberService {
 				.collect(Collectors.toSet());
 		
 		final Set<Subscriber> subs = findByGroupsId(groupIds);
-		final Set<ServiceProviderReport> report = createReport(subs);
+		final Set<ServiceProviderReport> report = calculateTotalSubsPerProvider(subs);
 		return report;
 	}
 }

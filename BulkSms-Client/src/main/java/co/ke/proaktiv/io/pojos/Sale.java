@@ -2,89 +2,79 @@ package co.ke.proaktiv.io.pojos;
 
 import java.util.Date;
 
-import co.ke.proaktiv.io.pojos.helpers.SaleType;
-import co.ke.proaktiv.io.pojos.helpers.Status;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-public class Sale {
+import co.ke.proaktiv.io.pojos.helpers.PaymentType;
+import co.ke.proaktiv.io.pojos.pro.Client;
+import co.ke.proaktiv.io.pojos.pro.Product;
 
-	private Long id;	
-	//this is the unique transaction code
-	//could be mpesaTransNo or payPalTransNo
-	private String code;
-	private SaleType type;
-	private Status status;
-	private boolean creditDisbursed;
-	private Date date;
-	private Payment payment;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Sale {	
 	
+	private Long id;	
+	private String invoiceNo;	
+	private String code;
+	private PaymentType type;
+	private boolean successful;
+	private String amountInfo;
+	private Date date;
+	private Product product;
+	private Client client;
 	public Sale() {
 		super();
 	}
-
-	public Sale(String code, SaleType type, Status status, Payment payment) {
-		super();
-		this.code = code;
-		this.type = type;
-		this.status = status;
-		this.creditDisbursed = Boolean.FALSE;
-		this.payment = payment;
-		this.date = new Date();
-	}
-
 	public Long getId() {
 		return id;
 	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	public SaleType getType() {
-		return type;
+	public String getInvoiceNo() {
+		return invoiceNo;
 	}
-
-	public void setType(SaleType type) {
-		this.type = type;
+	public void setInvoiceNo(String invoiceNo) {
+		this.invoiceNo = invoiceNo;
 	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public Status getStatus() {
-		return status;
-	}
-
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-
-	public Payment getPayment() {
-		return payment;
-	}
-
-	public void setPayment(Payment payment) {
-		this.payment = payment;
-	}
-
 	public String getCode() {
 		return code;
 	}
-
 	public void setCode(String code) {
 		this.code = code;
 	}
-
-	public boolean isCreditDisbursed() {
-		return creditDisbursed;
+	public PaymentType getType() {
+		return type;
 	}
-
-	public void setCreditDisbursed(boolean creditDisbursed) {
-		this.creditDisbursed = creditDisbursed;
+	public void setType(PaymentType type) {
+		this.type = type;
 	}
-
+	public boolean isSuccessful() {
+		return successful;
+	}
+	public void setSuccessful(boolean successful) {
+		this.successful = successful;
+	}
+	public String getAmountInfo() {
+		return amountInfo;
+	}
+	public void setAmountInfo(String amountInfo) {
+		this.amountInfo = amountInfo;
+	}
+	public Date getDate() {
+		return date;
+	}
+	public void setDate(Date date) {
+		this.date = date;
+	}
+	public Product getProduct() {
+		return product;
+	}
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+	public Client getClient() {
+		return client;
+	}
+	public void setClient(Client client) {
+		this.client = client;
+	}
 }

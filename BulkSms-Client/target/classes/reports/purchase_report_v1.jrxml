@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_report_v1" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1c78a216-4fae-4dba-9572-6c72e6ae6fce">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="Grey_Stripes">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}.intValue() % 2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#E8E8E8"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="CUSTOMER_DETAILS" class="co.ke.proaktiv.io.pojos.JR_Customer"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="date" class="java.util.Date"/>
+	<field name="productName" class="java.lang.String"/>
+	<field name="invoiceNo" class="java.lang.String"/>
+	<field name="transactionId" class="java.lang.String"/>
+	<field name="amount" class="java.lang.String"/>
+	<sortField name="date" order="Descending"/>
+	<variable name="RECORD_COUNT" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[Boolean.TRUE]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_PAGES" class="java.lang.Integer" incrementType="Page" calculation="Count">
+		<variableExpression><![CDATA[Boolean.TRUE]]></variableExpression>
+	</variable>
+	<title>
+		<band height="223" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="580" height="30" forecolor="#FFFFFF" backcolor="#7D7D7D" uuid="9163a184-0038-469c-9756-65d959a5714e"/>
+				<box padding="1">
+					<pen lineColor="#00FF66"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Lucida Bright" size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Purchase Report]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Opaque" x="20" y="33" width="760" height="30" forecolor="#000000" backcolor="#EDEDED" uuid="c3053c1e-232f-4b0a-b572-8076ed211cea"/>
+				<graphicElement>
+					<pen lineColor="#D1D1D1"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="70" y="33" width="100" height="30" forecolor="#0099CC" uuid="a6f69304-e3a7-4dd2-b6e1-ccaca3500aa7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Bright" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Purchaser]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="610" y="33" width="100" height="30" forecolor="#0099CC" backcolor="#FFFFFF" uuid="b51456b9-461c-4f0e-afd2-3780846eca47"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Bright" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Supplier]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="70" width="270" height="20" uuid="ed22084c-2c35-4e92-bfa7-8d49462aa85c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12"/>
+				</textElement>
+				<text><![CDATA[Proaktiv-io Technologies Ltd,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="90" width="270" height="20" uuid="af1aa8bb-8301-4383-8422-c04689b7b60d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12"/>
+				</textElement>
+				<text><![CDATA[Senteu Plaza, Galana Road,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="110" width="270" height="20" uuid="e5d0344d-8d45-4d14-8f2a-931378b3877a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12"/>
+				</textElement>
+				<text><![CDATA[P.O. Box 1593-00100 GPO,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="130" width="270" height="20" uuid="f6f15021-f8b2-4353-ab0b-bc319dcca3e5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12"/>
+				</textElement>
+				<text><![CDATA[Nairobi, Kenya.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="70" width="80" height="20" uuid="eb327ccc-86d1-4e95-801c-783021d8b334"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12"/>
+				</textElement>
+				<text><![CDATA[Customer Id:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="90" width="80" height="20" uuid="efcf0113-e79a-4b1a-a49a-2475257af693"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12"/>
+				</textElement>
+				<text><![CDATA[Name:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="110" width="80" height="20" uuid="88b9b9d1-27bf-4d99-b27a-0fcea0fcc231"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12"/>
+				</textElement>
+				<text><![CDATA[Location:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="150" width="100" height="20" uuid="9b1debd9-df44-48cc-a1e0-49f11da7d5a0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12"/>
+				</textElement>
+				<text><![CDATA[Requested By:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="170" width="100" height="20" uuid="ef35a43e-f7da-4693-82b7-ce8111e3d33f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12"/>
+				</textElement>
+				<text><![CDATA[Email:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="190" width="100" height="20" uuid="d73bffb4-b152-40a8-863d-e1343da827fe"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12"/>
+				</textElement>
+				<text><![CDATA[Date:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="170" width="270" height="20" uuid="f96c97ed-aa24-407b-816c-7f8b0adf0962"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12"/>
+				</textElement>
+				<text><![CDATA[Paybill No: 518654]]></text>
+			</staticText>
+			<image>
+				<reportElement x="610" y="190" width="160" height="30" uuid="fba03c97-fa8d-4f3b-aa21-295a8f921577"/>
+				<imageExpression><![CDATA["src/main/resources/images/proaktiv_io_logo.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="130" y="70" width="250" height="20" uuid="8d6622f2-0117-4516-ba13-f8be20adb8d7"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CUSTOMER_DETAILS}.getId()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="90" width="250" height="20" uuid="52305475-0335-4496-a5bd-a0f5aa517872"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CUSTOMER_DETAILS}.getName()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="110" width="250" height="20" uuid="f55b0810-a958-439b-97b9-347b2ec513eb"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CUSTOMER_DETAILS}.getCountry()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="150" y="170" width="260" height="20" uuid="a72daff9-d85c-4708-b842-1ff52cceb095"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CUSTOMER_DETAILS}.getEmail()]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="150" y="190" width="260" height="20" uuid="c80f95fa-b759-46c5-89d8-e98c4c62d7f9"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="390" y="70" width="1" height="140" forecolor="#F0F0F0" uuid="10136478-659d-4f36-b1ec-88d1a064c72e"/>
+			</line>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="31" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="30" y="0" width="40" height="30" forecolor="#0099CC" backcolor="#EDEDED" uuid="2b6fe89b-9c85-4dff-b92a-914e7d64920d"/>
+				<box padding="1">
+					<pen lineWidth="1.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[#]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="70" y="0" width="100" height="30" forecolor="#0099CC" backcolor="#EDEDED" uuid="56fe31f6-99bd-4fa3-974f-86a3817086d7"/>
+				<box padding="1">
+					<pen lineWidth="1.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="170" y="0" width="130" height="30" forecolor="#0099CC" backcolor="#EDEDED" uuid="c2264eee-4909-4490-b98e-bf6449bb397b"/>
+				<box padding="1">
+					<pen lineWidth="1.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Product Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="300" y="0" width="130" height="30" forecolor="#0099CC" backcolor="#EDEDED" uuid="a89c6508-7d93-44c5-a9ad-d8846ac55269"/>
+				<box padding="1">
+					<pen lineWidth="1.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Invoice No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="430" y="0" width="130" height="30" forecolor="#0099CC" backcolor="#EDEDED" uuid="bff8a674-d35f-44d1-b4b2-1fb014c9cb2a"/>
+				<box padding="1">
+					<pen lineWidth="1.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Transaction Id]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="560" y="0" width="90" height="30" forecolor="#0099CC" backcolor="#EDEDED" uuid="3192150a-db3b-4f7d-b87c-453473bc5ee2"/>
+				<box padding="1">
+					<pen lineWidth="1.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Qty]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="650" y="0" width="110" height="30" forecolor="#0099CC" backcolor="#EDEDED" uuid="1d331bda-4b52-451b-89a2-4c391be97433"/>
+				<box padding="1">
+					<pen lineWidth="1.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<textField pattern="MMM d, yyyy">
+				<reportElement key="" style="Grey_Stripes" x="70" y="3" width="100" height="16" uuid="cca811bb-4efd-4e65-b7e3-8c038bcc5c82">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b54609fd-baca-4d90-9719-c817ee904900"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Grey_Stripes" x="30" y="3" width="40" height="16" uuid="0cfad2eb-a993-41db-aaf3-a424b7b9ff3f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{RECORD_COUNT}+" ."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Grey_Stripes" x="170" y="3" width="130" height="16" uuid="2c56262d-d756-4882-9597-de046d1496b2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="120c2660-d575-4640-8483-7537901b9d27"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{productName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Grey_Stripes" x="300" y="3" width="130" height="16" uuid="0ef3670b-f206-4e0a-91e5-21b9a2dccac4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="bcac41b9-f6bf-4571-94d0-d9f1171e910c"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{invoiceNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Grey_Stripes" x="430" y="3" width="130" height="16" uuid="4d8cd6c7-1751-4b2a-863d-025fa4c4f264">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="04baaf6e-4c81-4174-9fe5-6412ad5e510d"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{transactionId}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Grey_Stripes" x="560" y="3" width="90" height="16" uuid="ea4653a8-ebd9-4ddb-b84f-03694dbf7789">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="940120f2-1adb-4e8e-8daa-4933cd844747"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{amount}.substring(4)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Grey_Stripes" x="650" y="3" width="110" height="16" uuid="394697dc-110c-4c26-94ec-fb7fd2fcabe3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4c1925bd-a18d-41c7-ab4d-236f6a96b4a4"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{amount}.toLowerCase()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="42" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Opaque" x="20" y="10" width="760" height="30" backcolor="#EDEDED" uuid="1801ef6a-0149-40bc-9a0e-20d7edf1dedf"/>
+				<graphicElement>
+					<pen lineColor="#D9D9D9"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="30" y="15" width="90" height="20" uuid="90539edd-0d83-4aa5-b596-d114c7e8cf90"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Printed for:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="130" y="15" width="300" height="20" uuid="8d5a394e-67e2-4d3f-beee-de6a38ec4b7a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Comfortaa" size="11" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CUSTOMER_DETAILS}.getName()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="590" y="15" width="179" height="20" uuid="d46ddc2e-ed1f-4467-a65e-17255d5fa2be"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Comfortaa"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page: "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="20" y="2" width="760" height="1" forecolor="#D9D9D9" uuid="40aa35ff-c815-44e3-b54d-01c3690648ee"/>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

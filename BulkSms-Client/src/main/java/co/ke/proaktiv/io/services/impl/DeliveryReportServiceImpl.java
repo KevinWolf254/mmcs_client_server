@@ -30,7 +30,7 @@ public class DeliveryReportServiceImpl implements DeliveryReportService {
 		return repository.findByOrganisationId(id);
 	}
 	@Override
-	public List<DeliveryReport> search(final Date from, final Date to, final Long id) {
-		return repository.search(from, to, id);
+	public List<DeliveryReport> findBtwnDates(final Date from, final Date to, final Long id) {
+		return repository.findBtwnDates(from, to, id);
 	}
 }

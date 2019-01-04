@@ -1,5 +1,7 @@
 package co.ke.proaktiv.io.services.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,11 @@ public class CountryServiceImpl implements CountryService {
 	@Override
 	public Country findByCode(String code) {
 		return repository.findByCode(code);
+	}
+
+	@Override
+	public List<Country> findAll() {
+		return repository.findAll();
 	}
 
 }

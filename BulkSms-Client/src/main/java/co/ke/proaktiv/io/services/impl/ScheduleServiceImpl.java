@@ -26,6 +26,10 @@ import co.ke.proaktiv.io.models.Organisation;
 import co.ke.proaktiv.io.models.Schedule;
 import co.ke.proaktiv.io.models.Text;
 import co.ke.proaktiv.io.models.User;
+import co.ke.proaktiv.io.models.builders.ScheduleBuilder;
+import co.ke.proaktiv.io.pojos.ChargesReport;
+import co.ke.proaktiv.io.pojos.ScheduleReport;
+import co.ke.proaktiv.io.pojos.Sms;
 import co.ke.proaktiv.io.pojos._Schedule;
 import co.ke.proaktiv.io.pojos._ScheduleDetails;
 import co.ke.proaktiv.io.pojos.helpers.ScheduleStatus;
@@ -33,6 +37,7 @@ import co.ke.proaktiv.io.pojos.helpers.ScheduleType;
 import co.ke.proaktiv.io.quartz.jobs.CronJob;
 import co.ke.proaktiv.io.quartz.jobs.SimpleJob;
 import co.ke.proaktiv.io.repository.ScheduleRepository;
+import co.ke.proaktiv.io.services.ChargesService;
 import co.ke.proaktiv.io.services.GroupService;
 import co.ke.proaktiv.io.services.JobScheduleService;
 import co.ke.proaktiv.io.services.OrganisationService;
@@ -60,9 +65,12 @@ public class ScheduleServiceImpl implements ScheduleService {
 	@Autowired
 	private OrganisationService orgService;
 	@Autowired
+	private ChargesService chargesService;
+	@Autowired
 	@Lazy
 	SchedulerFactoryBean schedulerFactoryBean;
-	
+	private static final Logger log = LoggerFactory.getLogger(ScheduleServiceImpl.class);
+
 	@Override
 	public Optional<Schedule> findByName(final String name) {
 		return repository.findByName(name);
@@ -71,44 +79,68 @@ public class ScheduleServiceImpl implements ScheduleService {
 	@Override
 	public Schedule save(final String orgName, final _Schedule _schedule, final String message, final Group_ group){
 		final Organisation org = orgService.findByName(orgName).get();
-		final Schedule schedule = convert(_schedule);
-		schedule.getGroups().add(group);
+		final ScheduleBuilder schedule = build(_schedule);
+		final Schedule schedule_ = schedule.build();
+		schedule_.getGroups().add(group);
 		
 		final Date date = _schedule.getDate();		
-		final Schedule sche =  repository.save(schedule);
+		final Schedule sche =  repository.save(schedule_);
 		textService.save(new Text(message, sche));
 		save(_schedule.getName(), org.getName(), date, _schedule.getCronExpression());
 		
 		return sche;
 	}
 
-	private Schedule convert(final _Schedule schedule) {
-		 Schedule schedule_ = null;
+	private ScheduleBuilder build(final _Schedule schedule) {
+		ScheduleBuilder schedule_ = null;
 		if(schedule.getType().equals(ScheduleType.DAILY))
-			schedule_ = new Schedule(schedule.getName(), schedule.getCreatedBy(), ScheduleType.DAILY, 
-					schedule.getDate());
+			schedule_ = new ScheduleBuilder()
+								.setName(schedule.getName())
+								.setSenderId(schedule.getSenderId())
+								.setCreatedBy(schedule.getCreatedBy())
+								.setType(ScheduleType.DAILY)
+								.setDate(schedule.getDate());
 		else if(schedule.getType().equals(ScheduleType.DATE)) 
-			schedule_ = new Schedule(schedule.getName(), schedule.getCreatedBy(), ScheduleType.DATE, 
-					schedule.getDate());
+			schedule_ = new ScheduleBuilder()
+								.setName(schedule.getName())
+								.setSenderId(schedule.getSenderId())
+								.setCreatedBy(schedule.getCreatedBy())
+								.setType(ScheduleType.DATE)
+								.setDate(schedule.getDate());	
 		else if(schedule.getType().equals(ScheduleType.WEEKLY))
-			schedule_ = new Schedule(schedule.getName(), schedule.getCreatedBy(), schedule.getDate(), 
-					schedule.getDayOfWeek(), schedule.getCronExpression());
+			schedule_ = new ScheduleBuilder()
+								.setName(schedule.getName())
+								.setSenderId(schedule.getSenderId())
+								.setCreatedBy(schedule.getCreatedBy())
+								.setDate(schedule.getDate())
+								.setDayOfWeek(schedule.getDayOfWeek())
+								.setCronExpression(schedule.getCronExpression());	
 		else if(schedule.getType().equals(ScheduleType.MONTHLY))
-			schedule_ = new Schedule(schedule.getName(), schedule.getCreatedBy(), schedule.getDate(), 
-					schedule.getDayOfMonth(), schedule.getCronExpression());
+			schedule_ = new ScheduleBuilder()
+								.setName(schedule.getName())
+								.setSenderId(schedule.getSenderId())
+								.setCreatedBy(schedule.getCreatedBy())
+								.setDate(schedule.getDate())
+								.setDayOfMonth(schedule.getDayOfMonth())
+								.setCronExpression(schedule.getCronExpression());
 		return schedule_;
 	}
 	
 	@Override
 	public Schedule save(final String orgName, final _Schedule _schedule, final String message, final Set<Group_> groups){
+		final User user = userService.getSignedInUser();
 		final Organisation org = orgService.findByName(orgName).get();
-		final Schedule schedule = convert(_schedule);
+		final ScheduleBuilder schedule = build(_schedule);
 		schedule.setGroups(groups);
 		
-		final Date date = _schedule.getDate();		
-		final Schedule sche =  repository.save(schedule);
+		final Date date = _schedule.getDate();
+		try {
+			save(_schedule.getName(), org.getName(), date, _schedule.getCronExpression());
+		} catch (Exception e) {
+			log.error("Exception: "+e.getMessage());
+		}
+		final Schedule sche =  repository.save(schedule.setCreatedBy(user.getEmail()).build());
 		textService.save(new Text(message, sche));
-		save(_schedule.getName(), org.getName(), date, _schedule.getCronExpression());
 		
 		return sche;
 	}
@@ -125,17 +157,21 @@ public class ScheduleServiceImpl implements ScheduleService {
 	
 	@Override
 	public void send(final String schedule_name) {
-		final Schedule schedule = repository.findByName(schedule_name).get();
-		
-		final String message = schedule.getText().getMessage();
-		final User user = userService.findByEmail(schedule.getCreatedBy()).get();
-		
-		final Set<Group_> groups = schedule.getGroups();
-		final Set<Long> groupIds = groups.stream()
-				.map(group -> group.getId())
-				.collect(Collectors.toSet());
-		
-		smsService.send(user, message, groupIds);
+		final Optional<Schedule> _schedule = repository.findByName(schedule_name);
+		if(_schedule.isPresent()) {
+			final Schedule schedule = _schedule.get();
+			final Text smsText = textService.findByScheduleId(schedule.getId());
+			final String message = smsText.getMessage();
+			final User user = userService.findByEmail(schedule.getCreatedBy()).get();
+			
+			final Set<Group_> groups = groupService.findBySchedule(schedule);
+			final Set<Long> groupIds = groups.stream()
+					.map(group -> group.getId())
+					.collect(Collectors.toSet());
+			
+			smsService.send(user, schedule.getSenderId(), message, groupIds);
+		}
+		log.info("Schedule: " + schedule_name + " could not be found for delivery");
 	}
 	
 	@Override
@@ -194,14 +230,16 @@ public class ScheduleServiceImpl implements ScheduleService {
 									e.printStackTrace();
 								}
 							});
-						}else
-							log.info("#### job details are null");
-					}catch(SchedulerException e){e.printStackTrace();}
+						}
+					}catch(SchedulerException e){
+						log.info("SchedulerException: "+ e.getMessage());
+						return;
+					}
 				});		
 		return details;
 	}
 	
-	public boolean isJobRunning(String jobName, String groupKey) {
+	public boolean isJobRunning(final String jobName, final String groupKey) {
 		String jobKey = jobName;
 
 		try {
@@ -221,7 +259,29 @@ public class ScheduleServiceImpl implements ScheduleService {
 		}
 		return false;
 	}
-	
-	private static final Logger log = LoggerFactory.getLogger(ScheduleServiceImpl.class);
 
+	@Override
+	public ScheduleReport getScheduleDetails(final String name) {
+		final Optional<Schedule> schedule = findByName(name);		
+		if(schedule.isPresent()) 
+			return processReport(schedule.get());		
+		return new ScheduleReport(400, "Bad request", "Campaign does not exist");
+	}
+
+	private ScheduleReport processReport(final Schedule schedule) {
+		final Set<Group_> groups = groupService.findBySchedule(schedule);
+		final ChargesReport charges = chargesService.calculate(processSms(schedule, groups));
+		return new ScheduleReport(200, "Success", "Campaign report populated", schedule, groups, charges);
+	}
+
+	private Sms processSms(final Schedule schedule, final Set<Group_> groups) {
+		final Text text = textService.findByScheduleId(schedule.getId());
+		final Sms request = new Sms();
+		request.setEmail(schedule.getCreatedBy());
+		request.setSenderId(schedule.getSenderId());
+		request.setGroupIds(groups.stream().map(group -> group.getId()).collect(Collectors.toSet()));
+		request.setMessage(text.getMessage());
+		return request;
+	}
+	
 }

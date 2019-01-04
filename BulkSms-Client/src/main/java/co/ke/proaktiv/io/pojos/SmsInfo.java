@@ -5,16 +5,18 @@ import java.util.Collection;
 public class SmsInfo {
 	
 	private String sender;
+	private String senderId;
 	private String recipients;
 	private Collection<ServiceProviderReport> phoneNosTotals;
 	private String message;
 	public SmsInfo() {
 		super();
 	}
-	public SmsInfo(String sender, String recipients, 
+	public SmsInfo(String sender, String senderId, String recipients, 
 			Collection<ServiceProviderReport> phoneNosTotals, String message) {
 		super();
 		this.sender = sender;
+		this.senderId = senderId;
 		this.recipients = recipients;
 		this.phoneNosTotals = phoneNosTotals;
 		this.message = message;
@@ -24,6 +26,12 @@ public class SmsInfo {
 	}
 	public void setSender(String sender) {
 		this.sender = sender;
+	}
+	public String getSenderId() {
+		return senderId;
+	}
+	public void setSenderId(String senderId) {
+		this.senderId = senderId;
 	}
 	public String getRecipients() {
 		return recipients;
@@ -42,5 +50,10 @@ public class SmsInfo {
 	}
 	public void setPhoneNosTotals(Collection<ServiceProviderReport> phoneNosTotals) {
 		this.phoneNosTotals = phoneNosTotals;
+	}
+	@Override
+	public String toString() {
+		return "SmsInfo [sender=" + sender + ", senderId=" + senderId + ", recipients=" + recipients
+				+ ", phoneNosTotals=" + phoneNosTotals + ", message=" + message + "]";
 	}
 }

@@ -33,5 +33,9 @@ public class Response {
 	}
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	@Override
+	public String toString() {
+		return "Response [code=" + code + ", title=" + title + ", message=" + message + "]";
 	}	
 }

@@ -7,5 +7,5 @@ import co.ke.proaktiv.io.models.DeliveryReport;
 
 public interface DeliverReportRepositoryCustom {
 
-	public List<DeliveryReport> search(Date from, Date to, Long id);
+	public List<DeliveryReport> findBtwnDates(Date from, Date to, Long id);
 }

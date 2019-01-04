@@ -23,11 +23,17 @@ public class UserCredentialsServiceImpl implements UserCredentialsService{
 	
 	@Autowired
 	private PasswordEncoder encoder;
+	private static final Logger log = LoggerFactory.getLogger(UserCredentialsService.class);
 
 	@Override
 	public UserCredentials save(UserCredentials credentials) {
-		final UserCredentials cred = repository.save(credentials);
-		log.info("##### saved: "+cred);
+		UserCredentials cred = null;
+		try {
+			cred = repository.save(credentials);
+		} catch (Exception e) {
+			log.info("Exception: "+e.getMessage());
+			return new UserCredentials();
+		}
 		return cred;
 	}
 	@Override
@@ -43,19 +49,24 @@ public class UserCredentialsServiceImpl implements UserCredentialsService{
 	
 	@Override
 	public UserCredentials update(final String newPassword) {
-		final User user = userService.getSignedInUser();
-		//retrieve user's credentials
-		final UserCredentials cred = findByUser(user);
-		final String encodedNewPass = encoder.encode(newPassword);
-		//change password
-		cred.setPassword(encodedNewPass);
-		return save(cred);
+		UserCredentials updatedCred = null;
+		try {
+			final User user = userService.getSignedInUser();
+			//retrieve user's credentials
+			final UserCredentials cred = findByUser(user);
+			final String encodedNewPass = encoder.encode(newPassword);
+			//change password
+			cred.setPassword(encodedNewPass);
+			updatedCred =  save(cred);
+		} catch (Exception e) {
+			log.info("Exception: "+e.getMessage());
+			return new UserCredentials();
+		}
+		return updatedCred;
 	}
 	
 	@Override
 	public void delete(UserCredentials cred) {
 		repository.delete(cred);	
 	}
-	
-	private static final Logger log = LoggerFactory.getLogger(UserCredentialsService.class);
 }

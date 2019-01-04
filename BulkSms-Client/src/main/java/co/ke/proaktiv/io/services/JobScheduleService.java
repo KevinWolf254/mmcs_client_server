@@ -13,13 +13,13 @@ public interface JobScheduleService {
 			final Class<? extends QuartzJobBean> jobScheduleClass, final Date date,
 			final String cronExpression);
 	
-	public boolean update(final String jobName, final Date date);
-	public boolean update(final String jobName, final Date date, 
-			final String cronExpression);	
+//	public boolean update(final String jobName, final Date date);
+//	public boolean update(final String jobName, final Date date, 
+//			final String cronExpression);	
 	
 	public boolean start(final String jobName);
-	public boolean pause(final String jobName);
-	public boolean resume(final String jobName);
+//	public boolean pause(final String jobName);
+//	public boolean resume(final String jobName);
 	public boolean delete(final String jobName);
-	public boolean stop(final String jobName);
+//	public boolean stop(final String jobName);
 }

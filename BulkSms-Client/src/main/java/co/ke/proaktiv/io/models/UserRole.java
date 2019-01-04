@@ -47,7 +47,7 @@ public class UserRole {
 
 	public UserRole(String role) {
 		super();
-		SetRole(role);
+		setRole(role);
 	}
 	
 	public UserRole(Role role, UserCredentials credentials) {
@@ -57,7 +57,7 @@ public class UserRole {
 	}
 	public UserRole(String role, UserCredentials credentials) {
 		super();
-		SetRole(role);
+		setRole(role);
 		this.credentials = credentials;
 	}
 	public Long getId() {
@@ -76,7 +76,7 @@ public class UserRole {
 		this.role = role;
 	}
 	
-	public void SetRole(String role) {
+	public void setRole(String role) {
 		if(role.equals(Role.ADMIN.getRole()))
 			this.role = Role.ADMIN;
 		else if(role.equals(Role.USER.getRole()))

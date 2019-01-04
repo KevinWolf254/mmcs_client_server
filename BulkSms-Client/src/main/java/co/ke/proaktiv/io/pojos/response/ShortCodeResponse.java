@@ -10,6 +10,10 @@ public class ShortCodeResponse extends Response {
 		super();
 	}
 
+	public ShortCodeResponse(int code, String title, String message) {
+		super(code, title, message);
+	}
+
 	public ShortCodeResponse(int code, String title, String message, ShortCode shortCode) {
 		super(code, title, message);
 		this.shortCode = shortCode;

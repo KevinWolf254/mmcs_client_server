@@ -17,11 +17,18 @@ public class UserRoleServiceImpl implements UserRoleService{
 
 	@Autowired
 	private UserRoleRepository repository;
-	
+	private static final Logger log = LoggerFactory.getLogger(UserRoleServiceImpl.class);
+
 	@Override
-	public UserRole save(UserRole role) {
-		final UserRole userRole = repository.save(role);		
-		log.info("##### saved: "+userRole);
+	public UserRole save(UserRole details) {
+		UserRole userRole = null;
+		try {
+			userRole= repository.save(details);
+		} catch (Exception e) {
+			log.info("Exception: "+e.getMessage());
+			return new UserRole();
+
+		}		
 		return userRole;
 	}
 
@@ -41,5 +48,4 @@ public class UserRoleServiceImpl implements UserRoleService{
 	public void delete(UserRole role) {
 		repository.delete(role);
 	}
-	private static final Logger log = LoggerFactory.getLogger(UserRoleService.class);
 }

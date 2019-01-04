@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -34,10 +33,13 @@ public class Schedule {
 	@Column(name="id")
 	private Long id;
 	
-	@Column(name="name", unique = true)
+	@Column(name="name", unique = true, nullable = false)
 	private String name;
 	
-	@Column(name="created_by")
+	@Column(name="sender_id", nullable = false)
+	private String senderId;
+	
+	@Column(name="created_by", nullable = false)
 	private String createdBy;
 	
 	@Column(name="type", nullable = false)
@@ -55,10 +57,6 @@ public class Schedule {
 	@Column(name="cron_expression")
 	private String cronExpression;
 	
-	@OneToOne(mappedBy = "schedule", 
-	        cascade = CascadeType.ALL, orphanRemoval = true)
-	private Text text;
-	
 	@ManyToMany
 	(fetch = FetchType.LAZY, 
 			cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -69,153 +67,52 @@ public class Schedule {
 	
 	public Schedule() {
 		super();
-	}
-		
-	/**
-	 * Date/Daily Schedule sent on a particular date/time at a particular time to all
-	 * @param name
-	 * @param type
-	 * @param time
-	 * @param date
-	 * @param text
-	 * @param groupAll; get the organization's group that has all the contacts. Every
-	 * contact is added to this group
-	 */
-	public Schedule(String name, String createdBy, ScheduleType type, Date date) {
+	}	
+	public Schedule(Long id, String name, String senderId, String createdBy, ScheduleType type, Date date, 
+			Day dayOfWeek, int dayOfMonth, String cronExpression, Set<Group_> groups) {
 		super();
+		this.id = id;
 		this.name = name;
+		this.senderId = senderId;
 		this.createdBy = createdBy;
-		this.type =  type;
-		this.date = date;
-	}
-	
-	/**
-	 * DayOfWeek Schedule sent on a particular day of week to all contacts
-	 * @param name
-	 * @param type
-	 * @param time
-	 * @param date
-	 * @param dayOfWeek
-	 * @param cronExpression
-	 * @param text
-	 * @param groupAll; get the organization's group that has all the contacts. Every
-	 * contact is added to this group
-	 */
-	public Schedule(String name, String createdBy, Date date, Day dayOfWeek, 
-			String cronExpression) {
-		super();
-		this.name = name;
-		this.createdBy = createdBy;
-		this.type = ScheduleType.WEEKLY;
+		this.type = type;
 		this.date = date;
 		this.dayOfWeek = dayOfWeek;
-		this.cronExpression = cronExpression;
-	}
-	
-	/**
-	 * Monthly Schedule sent on a particular day of month to all contacts
-	 * @param name
-	 * @param type
-	 * @param time
-	 * @param date
-	 * @param dayOfMonth
-	 * @param cronExpression
-	 * @param text
-	 * @param groupAll; get the organization's group that has all the contacts. Every
-	 * contact is added to this group
-	 */
-	public Schedule(String name, String createdBy, Date date, int dayOfMonth, 
-			String cronExpression) {
-		super();
-		this.name = name;
-		this.createdBy = createdBy;
-		this.type = ScheduleType.MONTHLY;
-		this.date = date;
 		this.dayOfMonth = dayOfMonth;
 		this.cronExpression = cronExpression;
+		this.groups = groups;
 	}
-
 	public Long getId() {
 		return id;
 	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return name;
 	}
-
-	public void setName(String name) {
-		this.name = name;
+	public String getSenderId() {
+		return senderId;
 	}
-
 	public String getCreatedBy() {
 		return createdBy;
 	}
-
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Text getText() {
-		return text;
-	}
-
-	public void setText(Text message) {
-		this.text = message;
-	}
-
 	public ScheduleType getType() {
 		return type;
 	}
-
-	public void setType(ScheduleType type) {
-		this.type = type;
-	}
-
 	public Date getDate() {
 		return date;
 	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
 	public Day getDayOfWeek() {
 		return dayOfWeek;
 	}
-
-	public void setDayOfWeek(Day dayOfWeek) {
-		this.dayOfWeek = dayOfWeek;
-	}
-
 	public int getDayOfMonth() {
 		return dayOfMonth;
 	}
-
-	public void setDayOfMonth(int dayOfMonth) {
-		this.dayOfMonth = dayOfMonth;
-	}
-
 	public String getCronExpression() {
 		return cronExpression;
-	}
-
-	public void setCronExpression(String cronExpression) {
-		this.cronExpression = cronExpression;
-	}
-	
+	}	
 	@JsonIgnore
 	public Set<Group_> getGroups() {
 		return groups;
 	}
-
-	public void setGroups(Set<Group_> groups) {
-		this.groups = groups;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -239,13 +136,14 @@ public class Schedule {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
-	}
-	
+	}	
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("Schedule [name=")
 				.append(name)
+				.append(", senderId=")
+				.append(senderId)
 				.append(", type=")
 				.append(type)
 				.append(", date=")

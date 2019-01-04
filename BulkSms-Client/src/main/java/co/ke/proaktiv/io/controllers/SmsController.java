@@ -21,14 +21,15 @@ public class SmsController {
 	private SmsService smsService;
 	
 	@PostMapping(value = "/secure/sms")
-	public ResponseEntity<Object> send(@RequestBody Sms sms){
+	public ResponseEntity<Object> send(@RequestBody final Sms sms){
 		Response response;
 		final User user = userService.getSignedInUser();
 		if(!sms.getGroupIds().isEmpty() || sms.getGroupIds() != null) 
-			response = smsService.send(user, sms.getMessage(), sms.getGroupIds());
+			response = smsService.send(user, sms.getSenderId(), sms.getMessage(), sms.getGroupIds());
 		else
-			response = smsService.send(user, sms.getMessage());
-		
+			response = smsService.send(user, sms.getSenderId(), sms.getMessage());
+		if(response.getCode() == 400)
+			return new ResponseEntity<Object>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		return new ResponseEntity<Object>(response, HttpStatus.OK);
 	}	
 }

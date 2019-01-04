@@ -4,26 +4,30 @@ import co.ke.proaktiv.io.models.ServiceProvider;
 
 public class ServiceProviderReport {
 
-	private ServiceProvider name;
-	private long totalSubscribers;
+	private ServiceProvider provider;
+	private long subscribers;
 	public ServiceProviderReport() {
 		super();
 	}
-	public ServiceProviderReport(ServiceProvider name, long totalSubscribers) {
+	public ServiceProviderReport(ServiceProvider name, long subscribers) {
 		super();
-		this.name = name;
-		this.totalSubscribers = totalSubscribers;
+		this.provider = name;
+		this.subscribers = subscribers;
 	}
-	public ServiceProvider getName() {
-		return name;
+	public ServiceProvider getProvider() {
+		return provider;
 	}
-	public void setName(ServiceProvider serviceProvider) {
-		this.name = serviceProvider;
+	public void setProvider(ServiceProvider serviceProvider) {
+		this.provider = serviceProvider;
 	}
-	public long getTotalSubscribers() {
-		return totalSubscribers;
+	public long getSubscribers() {
+		return subscribers;
 	}
-	public void setTotalSubscribers(long totals) {
-		this.totalSubscribers = totals;
-	}	
+	public void setSubscribers(long subscribers) {
+		this.subscribers = subscribers;
+	}
+	@Override
+	public String toString() {
+		return "ServiceProviderReport [provider=" + provider + ", subscribers=" + subscribers + "]";
+	}
 }

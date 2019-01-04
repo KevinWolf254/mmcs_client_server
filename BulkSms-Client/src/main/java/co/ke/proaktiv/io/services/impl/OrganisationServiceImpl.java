@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -15,8 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import co.ke.proaktiv.io.configurations.RemoteServersProperties;
 import co.ke.proaktiv.io.models.Country;
 import co.ke.proaktiv.io.models.Group_;
 import co.ke.proaktiv.io.models.Organisation;
@@ -53,15 +54,15 @@ public class OrganisationServiceImpl implements OrganisationService{
 	private GroupService groupService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+	private static final Logger log = LoggerFactory.getLogger(OrganisationServiceImpl.class);
+
 	@Autowired
 	private RestTemplate restTemplate;
+	@Autowired
+    private RemoteServersProperties properties;
 	private MultiValueMap<String, Object> parameters;
 	private HttpHeaders header;
 	private HttpEntity<MultiValueMap<String, Object>> body;
-
-	@Value("${mmcs.aeon.url}")
-	private String URI;
 
 	@Override
 	public Optional<Organisation> findById(final Long id) {
@@ -84,21 +85,20 @@ public class OrganisationServiceImpl implements OrganisationService{
 		if(client_.isPresent()) 
 			return new SignUp(400, "failed", "Organization already exist");
 	
+		//save at proaktiv_io api_database
 		final SignUp report = saveToApi(client, user);
 		if(report.getCode() == 400)
 			return report;
-		
-		log.info("response: "+report);
-		
+				
 		final Client savedClient = report.getClient();
 		
 		final String countryName = report.getClient().getCountry().getName();
 		final Country country = countryService.findByName(countryName);
 		
-		final Organisation org = save(new Organisation(savedClient.getId(), 
+		final Organisation org = save(new Organisation(savedClient.getId(), savedClient.getCustomerId(),
 				savedClient.getName(), country));
 
-		groupService.save(new Group_("All_Contacts", org));
+		groupService.save(new Group_("All_Subscribers", org));
 		
 		final User newUser = userService.save(new User(user.getSurname(), user.getOtherNames(), 
 				user.getEmail(), org));
@@ -126,16 +126,30 @@ public class OrganisationServiceImpl implements OrganisationService{
 				
 		body = new HttpEntity<MultiValueMap<String, Object>>(parameters, header);
 		
-		final ResponseEntity<SignUp> response = restTemplate.exchange(URI + "/client", 
-				HttpMethod.POST, body, SignUp.class);
+		ResponseEntity<SignUp> response = null;
+		try {
+			response = restTemplate.exchange(properties.getApiServer() + "/client", 
+					HttpMethod.POST, body, SignUp.class);
+		} catch (RestClientException e) {
+			log.info("RestClientException: "+e.getMessage());
+			return new SignUp(400, "error", "something happened");
+		}catch (Exception e) {
+			log.info("Exception: "+e.getMessage());
+			return new SignUp(400, "error", "something happened");
+		}
 		return response.getBody();
 	}
 	
 	@Override
-	public Organisation save(final Organisation organisation) {
-		final Organisation org = repository.save(organisation);
-		log.info("##### saved: "+org);
-		return org;
+	public Organisation save(final Organisation details) {
+		Organisation organisation = null;
+		try {
+			organisation = repository.save(details);
+		} catch (Exception e) {
+			log.info("Exception: "+e.getMessage());
+			return new Organisation();
+		}
+		return organisation;
 	}
 	
 	@Override
@@ -157,11 +171,18 @@ public class OrganisationServiceImpl implements OrganisationService{
 		
 		body = new HttpEntity<MultiValueMap<String, Object>>(parameters, header);
 		
-		final ResponseEntity<Credit> response = restTemplate
-				.exchange(URI + "/user", 
-				HttpMethod.POST, body, Credit.class);
-		final Credit client = response.getBody();
-		return client;
+		ResponseEntity<Credit> response;
+		try {
+			response = restTemplate
+					.exchange(properties.getApiServer() + "/user", 
+					HttpMethod.POST, body, Credit.class);
+		} catch (RestClientException e) {
+			log.info("RestClientException: "+e.getMessage());
+			return new Credit(400, "error", "something happened");
+		}catch (Exception e) {
+			log.info("Exception: "+e.getMessage());
+			return new Credit(400, "error", "something happened");
+		}
+		return response.getBody();
 	}	
-	private static final Logger log = LoggerFactory.getLogger(OrganisationServiceImpl.class);
 }

@@ -14,7 +14,7 @@ spring:
     port: 465
     protocol: smtps
     username: aeon.io.tech@gmail.com
-    password: K@ny1_3l3v3N
+    password: N@mber_11
     properties:
       mail:
         smtps:
@@ -24,7 +24,76 @@ spring:
             enable: true
         transport:
           protocol: smtps
+  servlet:     
+    multipart:
+      enabled: true
 server:
-  port: 8083
   servlet:
     context-path: /mmcs
+  port: 8083
+#  port: 8443
+#  ssl:
+#    enabled: true
+#    key-alias: api-marketme-client
+#    key-store: classpath:store/api-marketme-client.keystore
+#    key-store-type: PKCS12
+#    key-store-password: <N@mber_11>
+url:
+  api-server: http://localhost:8082/mmcs
+#  api-server: https://localhost:8443/mmcs
+  ui-server: http://localhost:4200
+  accepted-origins:
+    - http://localhost:4200
+    - http://www.localhost:4200
+  
+---
+
+spring:
+  profiles: production
+  datasource:
+    url: jdbc:mysql://mysql:3306/marketme_client_db
+    username: mmcs_dbm
+    password: <9r0@q7iV3_1O>    
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        id:
+          new_generator_mappings: false
+  mail:
+    host: smtp.gmail.com
+    port: 465
+    protocol: smtps
+    username: aeon.io.tech@gmail.com
+    password: N@mber_11
+    properties:
+      mail:
+        smtps:
+          auth: true
+          timeout: 8000
+          starttls:
+            enable: true
+        transport:
+          protocol: smtp
+  servlet:     
+    multipart:
+      enabled: true
+server: 
+  servlet:
+    context-path: /mmcs 
+  port: 8080
+#  port: 8443
+#  ssl:
+#    enabled: true
+#    key-alias: api.marketme
+#    key-store: classpath:store/keystore
+#    key-store-type: PKCS12
+#    key-store-password: <N@mber_11>
+url:   
+  api-server: http://api.marketme.proaktivio.com/mmcs
+  ui-server: http://proaktivio.com
+  accepted-origins:
+    - http://proaktivio.com
+    - http://www.proaktivio.com
+    - https://proaktivio.com
+    - https://www.proaktivio.com  

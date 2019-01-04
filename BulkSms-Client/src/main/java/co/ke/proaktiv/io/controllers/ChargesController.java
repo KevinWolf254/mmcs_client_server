@@ -3,22 +3,22 @@ package co.ke.proaktiv.io.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import co.ke.proaktiv.io.pojos.CreditCharges;
-import co.ke.proaktiv.io.services.CreditService;
-import co.ke.proaktiv.io.services.UserService;
+import co.ke.proaktiv.io.pojos.ChargesReport;
+import co.ke.proaktiv.io.pojos.Sms;
+import co.ke.proaktiv.io.services.ChargesService;
 
+@RestController
 public class ChargesController {
 	@Autowired
-	private UserService userService;
-	@Autowired
-	private CreditService creitService;
+	private ChargesService chargesServices;
 	
-	@GetMapping(value = "/secure/charges")
-	public ResponseEntity<Object> getCharges(){
-		final Long id = userService.getSignedInUser().getOrganisation().getId();
-		final CreditCharges charges = creitService.findByOrganisationId(id);
-		return new ResponseEntity<Object>(charges, HttpStatus.OK);
+	@PostMapping(value = "/secure/charges")
+	public ResponseEntity<Object> calculateCharges(@RequestBody final Sms sms){
+		final ChargesReport report = chargesServices.calculate(sms);
+		return new ResponseEntity<Object>(report, HttpStatus.OK);
 	}
 }

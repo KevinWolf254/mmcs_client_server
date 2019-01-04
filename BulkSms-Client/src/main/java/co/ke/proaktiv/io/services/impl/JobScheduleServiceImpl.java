@@ -37,7 +37,7 @@ public class JobScheduleServiceImpl implements JobScheduleService {
 	
 	@Autowired
 	protected ApplicationContext context;
-//	final static String groupKey = "Organization_Group";	
+	private static final Logger log = LoggerFactory.getLogger(JobScheduleServiceImpl.class);
 
 	@Override
 	public boolean save(final String name, final String schedule_group, 
@@ -79,92 +79,35 @@ public class JobScheduleServiceImpl implements JobScheduleService {
 			scheduler.scheduleJob(jobDetail, cronTriggerBean);
 			return true;
 		} catch (SchedulerException e) {
-			log.error("***** SchedulerException: "+e.getMessage());
+			log.error("SchedulerException: "+e.getMessage());
 			e.printStackTrace();
 		}
 		return false;
 	}
-
-	@Override
-	public boolean update(final String jobName, final Date date) {
-		return false;
-	}
-
-	@Override
-	public boolean update(final String jobName, final Date date, final String cronExpression) {
-		return false;
-	}
-	
 	@Override
 	public boolean start(final String jobName) {
 		final User user = userService.getSignedInUser();
-		final String subject = "Job Schedule Started";
-		final StringBuilder build = new StringBuilder("Job schedule: ")
-				.append(""+jobName)
-				.append(" was successfully STARTED on ")
-				.append(""+new Date());
+		final String subject = "Sms Campaign Manually Started";
+		final StringBuilder build = new StringBuilder("Sms Marketing Campaign: ")
+				.append(jobName)
+				.append(" was manually STARTED on ")
+				.append(new Date());
 		
 		String jobKey = jobName;
-//		String groupKey = "SampleGroup";
 		final String groupKey = user.getOrganisation().getName();
 
-		JobKey jKey = new JobKey(jobKey, groupKey); 
+		final JobKey jKey = new JobKey(jobKey, groupKey); 
 		try {
 			schedulerFactoryBean.getScheduler().triggerJob(jKey);
 			emailService.sendEmail(new EmailMessage(user.getEmail(), subject, build.toString()));
 			return true;
 		} catch (SchedulerException e) {
-			e.printStackTrace();
+			log.error("SchedulerException: "+e.getMessage());
+			return false;
+		}catch (Exception e) {
+			log.error("Exception: "+e.getMessage());
+			return false;
 		}		
-		return false;
-	}
-	@Override
-	public boolean pause(final String jobName) {
-		final User user = userService.getSignedInUser();
-		final String subject = "Job Schedule Paused";
-		final StringBuilder build = new StringBuilder("Job schedule: ")
-				.append(""+jobName)
-				.append(" was PAUSED on ")
-				.append(""+new Date());
-		
-		final String jobKey = jobName;
-//		String groupKey = "SampleGroup";
-		final String groupKey = user.getOrganisation().getName();
-		final JobKey jkey = new JobKey(jobKey, groupKey); 
-
-		try {
-			schedulerFactoryBean.getScheduler().pauseJob(jkey);
-			emailService.sendEmail(new EmailMessage(user.getEmail(), subject, build.toString()));
-
-			return true;
-		} catch (SchedulerException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	@Override
-	public boolean resume(final String jobName) {
-		final User user = userService.getSignedInUser();
-		final String subject = "Job Schedule Resumed";
-		final StringBuilder build = new StringBuilder("Job schedule: ")
-				.append(""+jobName)
-				.append(" was RESUMED on ")
-				.append(""+new Date());
-		
-		final String jobKey = jobName;
-//		String groupKey = "SampleGroup";
-		final String groupKey = user.getOrganisation().getName();
-
-		final JobKey jKey = new JobKey(jobKey, groupKey); 
-		try {
-			schedulerFactoryBean.getScheduler().resumeJob(jKey);
-			emailService.sendEmail(new EmailMessage(user.getEmail(), subject, build.toString()));
-			return true;
-		} catch (SchedulerException e) {
-			e.printStackTrace();
-		}
-		return false;
 	}
 
 	@Override
@@ -177,7 +120,6 @@ public class JobScheduleServiceImpl implements JobScheduleService {
 				.append(""+new Date());
 		
 		final String jobKey = jobName;
-//		String groupKey = "SampleGroup";
 		final String groupKey = user.getOrganisation().getName();
 
 		final JobKey jkey = new JobKey(jobKey, groupKey); 
@@ -191,30 +133,4 @@ public class JobScheduleServiceImpl implements JobScheduleService {
 		}
 		return false;
 	}
-	
-	@Override
-	public boolean stop(final String jobName) {
-		final User user = userService.getSignedInUser();
-		final String subject = "Job Schedule Stopped";
-		final StringBuilder build = new StringBuilder("Job schedule: ")
-				.append(""+jobName)
-				.append(" was STOPPED on ")
-				.append(""+new Date());
-		try{	
-			final String jobKey = jobName;
-//			String groupKey = "SampleGroup";
-			final String groupKey = user.getOrganisation().getName();
-
-			final Scheduler scheduler = schedulerFactoryBean.getScheduler();
-			final JobKey jkey = new JobKey(jobKey, groupKey);
-			emailService.sendEmail(new EmailMessage(user.getEmail(), subject, build.toString()));
-
-			return scheduler.interrupt(jkey);
-
-		} catch (SchedulerException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-	private static final Logger log = LoggerFactory.getLogger(JobScheduleServiceImpl.class);
 }

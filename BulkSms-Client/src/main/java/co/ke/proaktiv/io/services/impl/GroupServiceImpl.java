@@ -3,10 +3,13 @@ package co.ke.proaktiv.io.services.impl;
 import java.util.Optional;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import co.ke.proaktiv.io.models.Group_;
+import co.ke.proaktiv.io.models.Schedule;
 import co.ke.proaktiv.io.pojos.response.Response;
 import co.ke.proaktiv.io.repository.GroupRepository;
 import co.ke.proaktiv.io.services.GroupService;
@@ -20,10 +23,18 @@ public class GroupServiceImpl implements GroupService {
 
 	@Autowired
 	private UserService userService;	
+	private static final Logger log = LoggerFactory.getLogger(GroupServiceImpl.class);
 
 	@Override
 	public Group_ save(final Group_ group) {
-		return repository.save(group);
+		Group_ response;
+		try {
+			response = repository.save(group);
+		} catch (Exception e) {
+			log.info("Exception: "+e.getMessage());
+			return new Group_();
+		}
+		return response;
 	}
 	
 	@Override
@@ -34,7 +45,11 @@ public class GroupServiceImpl implements GroupService {
 	@Override
 	public Optional<Group_> findByName(final String name) {
 		final Long id = userService.getSignedInUser().getOrganisation().getId();
-		return repository.findByName(id+"_"+name);
+		final String groupName = id+"_"+name;
+		
+		log.info("Searching for: "+groupName);
+		
+		return repository.findByName(groupName);
 	} 
 
 	@Override
@@ -50,53 +65,9 @@ public class GroupServiceImpl implements GroupService {
 	public Optional<Group_> findById(Long id) {
 		return repository.findById(id);
 	}
-	
-//	@Override
-//	public void saveGroup(String name) {
-//		Organisation organisation = userService.getSignedInUser().getEmployer();
-//		save(new Group(name, organisation));
-//	}
-//
-//
-//	@Override
-//	public _ContactsTotals getGroupedContacts(List<Long> groupIds) {
-//		Set<Subscriber> allContacts = new HashSet<>();
-//
-//		groupIds.stream().forEach(id ->{
-//			List<Subscriber> rawContacts = contactService.findByGroupsId(id);
-//			rawContacts.parallelStream().forEach(contact ->{
-//				allContacts.add(contact);
-//			});
-//		});
-//		
-//		List<Subscriber> contacts = new ArrayList<>();
-//		allContacts.stream().forEach(contact ->{
-//			contacts.add(contact);
-//		});
-//		
-//		
-//		return contactService.seperateContacts(contacts);
-//	}
-//
-//	@Override
-//	public Group findById(Long id) {
-//		return repository.findById(id).get();
-//	}
-//	
-//	@Override
-//	public CompletableFuture<List<Group>> findAllById(Set<Long> groupIds){
-//		List<Group> groups =  repository.findAllById(groupIds);
-//		return CompletableFuture.completedFuture(groups);
-//	}
-//
-//	@Override
-//	public List<Group> findBySchedulesId(Long id) {
-//		return repository.findBySchedulesId(id);
-//	}
-//
-//	@Override
-//	public Set<Group> findByContactsId(Long contact_id) {
-//		return repository.findByContactsId(contact_id);
-//	}
 
+	@Override
+	public Set<Group_> findBySchedule(Schedule schedule) {
+		return repository.findBySchedulesId(schedule.getId());
+	}
 }

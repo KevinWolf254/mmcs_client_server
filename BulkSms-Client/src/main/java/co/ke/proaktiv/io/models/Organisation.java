@@ -26,6 +26,9 @@ public class Organisation {
 	@Column(name="id")
 	private Long id;
 	
+	@Column(name="customer_id", nullable = false, unique=true)
+	private String customerId;
+	
 	@Column(name="name", unique = true)
 	private String name;
 	
@@ -54,9 +57,10 @@ public class Organisation {
 		super();
 	}
 
-	public Organisation(Long id, String name, Country country) {
+	public Organisation(Long id, String customerId, String name, Country country) {
 		super();
 		this.id = id;
+		this.customerId = customerId;
 		this.name = name;
 		this.country = country;
 	}
@@ -66,6 +70,13 @@ public class Organisation {
 	public void setId(Long id) {
 		this.id = id;
 	}
+	public String getCustomerId() {
+		return customerId;
+	}
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -104,8 +115,6 @@ public class Organisation {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("Organisation [id=")
 				.append(id)
-//				.append(", number=")
-//				.append(number)
 				.append(", name=")
 				.append(name)
 				.append("]");
